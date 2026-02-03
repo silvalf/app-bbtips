@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
+             x:Class="BBTipsManager.App.Pages.BancasPage"
+             x:DataType="vm:BancasViewModel"
+             Title="Bancas">
+    
+    <Grid RowDefinitions="Auto,*">
+        
+        <!-- Header com botao -->
+        <VerticalStackLayout Grid.Row="0" Padding="16" Spacing="8">
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Minhas Bancas" Style="{StaticResource TitleLabel}"/>
+                    <Label Text="Gerencie suas bancas de apostas" Style="{StaticResource SubtitleLabel}"/>
+                </VerticalStackLayout>
+                <Button Grid.Column="1" Text="+ Nova Banca" 
+                        Command="{Binding ToggleNovaBancaCommand}"
+                        VerticalOptions="Center"/>
+            </Grid>
+            
+            <!-- Form Nova Banca -->
+            <Frame Style="{StaticResource CardFrame}" IsVisible="{Binding ShowNovaBanca}" Margin="0,8">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Nova Banca" FontAttributes="Bold" FontSize="16"/>
+                    
+                    <Entry Placeholder="Nome da Banca" Text="{Binding NovoBancaNome}"/>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Saldo Inicial" Style="{StaticResource MutedLabel}"/>
+                            <Entry Placeholder="0.00" Text="{Binding NovoBancaSaldoInicial}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Stake Base" Style="{StaticResource MutedLabel}"/>
+                            <Entry Placeholder="10.00" Text="{Binding NovoBancaStakeBase}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Stop Loss (%)" Style="{StaticResource MutedLabel}"/>
+                            <Entry Placeholder="20" Text="{Binding NovoBancaStopLoss}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Stop Gain (%)" Style="{StaticResource MutedLabel}"/>
+                            <Entry Placeholder="30" Text="{Binding NovoBancaStopGain}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Multiplicador (Gale)" Style="{StaticResource MutedLabel}"/>
+                            <Entry Placeholder="2" Text="{Binding NovoBancaMultiplicador}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Max Gales" Style="{StaticResource MutedLabel}"/>
+                            <Entry Placeholder="3" Text="{Binding NovoBancaMaxGales}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Mercado" Style="{StaticResource MutedLabel}"/>
+                            <Picker ItemsSource="{Binding Mercados}" 
+                                    SelectedItem="{Binding NovoBancaMercadoSelecionado}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Estrategia" Style="{StaticResource MutedLabel}"/>
+                            <Picker ItemsSource="{Binding Estrategias}" 
+                                    SelectedItem="{Binding NovoBancaEstrategiaSelecionada}"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Button Grid.Column="0" Text="Cancelar" 
+                                Command="{Binding ToggleNovaBancaCommand}"
+                                Style="{StaticResource SecondaryButton}"/>
+                        <Button Grid.Column="1" Text="Salvar" 
+                                Command="{Binding SalvarNovaBancaCommand}"
+                                Style="{StaticResource SuccessButton}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+        
+        <!-- Lista de Bancas -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0" Spacing="8">
+                <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                   IsVisible="{Binding IsLoading}"
+                                   Color="{StaticResource Accent}"/>
+                
+                <CollectionView ItemsSource="{Binding Bancas}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="core:Banca">
+                            <Frame Style="{StaticResource CardFrame}" Margin="0,4">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BancasViewModel}}, Path=AbrirBancaCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Frame.GestureRecognizers>
+                                
+                                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                                    <!-- Nome e Status -->
+                                    <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8">
+                                        <Label Text="{Binding Nome}" FontAttributes="Bold" FontSize="16"/>
+                                        <Frame Padding="6,2" CornerRadius="4" HasShadow="False">
+                                            <Frame.BackgroundColor>
+                                                <MultiBinding Converter="{x:Static local:Converters.StatusColorConverter}">
+                                                    <Binding Path="Status"/>
+                                                </MultiBinding>
+                                            </Frame.BackgroundColor>
+                                            <Label Text="{Binding Status}" FontSize="10" TextColor="White"/>
+                                        </Frame>
+                                    </HorizontalStackLayout>
+                                    
+                                    <!-- Mercado e Estrategia -->
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="8">
+                                        <Label Text="{Binding Mercado}" Style="{StaticResource MutedLabel}"/>
+                                        <Label Text="-" Style="{StaticResource MutedLabel}"/>
+                                        <Label Text="{Binding Estrategia}" Style="{StaticResource MutedLabel}"/>
+                                    </HorizontalStackLayout>
+                                    
+                                    <!-- Metricas -->
+                                    <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Spacing="16">
+                                        <Label Text="{Binding SaldoAtual, StringFormat='R$ {0:N2}'}" FontSize="12"/>
+                                        <Label Text="{Binding Assertividade, StringFormat='{0:N0}% acerto'}" 
+                                               FontSize="12" TextColor="{StaticResource Success}"/>
+                                        <Label Text="{Binding TotalOperacoes, StringFormat='{0} ops'}" 
+                                               FontSize="12" Style="{StaticResource MutedLabel}"/>
+                                    </HorizontalStackLayout>
+                                    
+                                    <!-- Lucro/Prejuizo -->
+                                    <VerticalStackLayout Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" 
+                                                         VerticalOptions="Center" Margin="16,0">
+                                        <Label Text="{Binding LucroTotal, StringFormat='R$ {0:N2}'}" 
+                                               FontAttributes="Bold" FontSize="16" HorizontalTextAlignment="End"/>
+                                        <Label Text="{Binding PercentualLucro, StringFormat='{0:N1}%'}" 
+                                               Style="{StaticResource MutedLabel}" HorizontalTextAlignment="End"/>
+                                    </VerticalStackLayout>
+                                    
+                                    <!-- Botao Excluir -->
+                                    <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" 
+                                            Text="X" WidthRequest="40" HeightRequest="40"
+                                            BackgroundColor="{StaticResource Danger}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BancasViewModel}}, Path=ExcluirBancaCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="40">
+                            <Label Text="Nenhuma banca cadastrada" 
+                                   Style="{StaticResource SubtitleLabel}"
+                                   HorizontalTextAlignment="Center"/>
+                            <Label Text="Clique em '+ Nova Banca' para comecar" 
+                                   Style="{StaticResource MutedLabel}"
+                                   HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+        
+    </Grid>
+    
+</ContentPage>
