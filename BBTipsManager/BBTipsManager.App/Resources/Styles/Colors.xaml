@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Cores do Tema Dark - Inspirado em Trading -->
+    <Color x:Key="Primary">#1a1a2e</Color>
+    <Color x:Key="PrimaryDark">#0f0f1a</Color>
+    <Color x:Key="PrimaryLight">#2d2d44</Color>
+    
+    <Color x:Key="Secondary">#16213e</Color>
+    <Color x:Key="SecondaryDark">#0d1425</Color>
+    
+    <Color x:Key="Accent">#e94560</Color>
+    <Color x:Key="AccentLight">#ff6b8a</Color>
+    
+    <!-- Cores de Status -->
+    <Color x:Key="Success">#00d26a</Color>
+    <Color x:Key="SuccessLight">#33ff99</Color>
+    <Color x:Key="Warning">#ffc107</Color>
+    <Color x:Key="Danger">#ff4757</Color>
+    <Color x:Key="DangerLight">#ff6b7a</Color>
+    <Color x:Key="Info">#00bcd4</Color>
+    
+    <!-- Cores de Texto -->
+    <Color x:Key="TextPrimary">#ffffff</Color>
+    <Color x:Key="TextSecondary">#b3b3b3</Color>
+    <Color x:Key="TextMuted">#666666</Color>
+    
+    <!-- Cores de Fundo -->
+    <Color x:Key="BackgroundDark">#0a0a14</Color>
+    <Color x:Key="BackgroundMedium">#141428</Color>
+    <Color x:Key="CardBackground">#1e1e3c</Color>
+    <Color x:Key="CardBorder">#2d2d5a</Color>
+    
+    <!-- Grays -->
+    <Color x:Key="Gray100">#e1e1e1</Color>
+    <Color x:Key="Gray200">#c8c8c8</Color>
+    <Color x:Key="Gray300">#acacac</Color>
+    <Color x:Key="Gray400">#919191</Color>
+    <Color x:Key="Gray500">#6e6e6e</Color>
+    <Color x:Key="Gray600">#404040</Color>
+    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray950">#141414</Color>
+
+</ResourceDictionary>
