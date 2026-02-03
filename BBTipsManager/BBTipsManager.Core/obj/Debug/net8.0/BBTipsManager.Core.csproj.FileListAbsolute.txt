@@ -1,0 +1,11 @@
+/app/BBTipsManager/BBTipsManager.Core/bin/Debug/net8.0/BBTipsManager.Core.deps.json
+/app/BBTipsManager/BBTipsManager.Core/bin/Debug/net8.0/BBTipsManager.Core.dll
+/app/BBTipsManager/BBTipsManager.Core/bin/Debug/net8.0/BBTipsManager.Core.pdb
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/BBTipsManager.Core.GeneratedMSBuildEditorConfig.editorconfig
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/BBTipsManager.Core.AssemblyInfoInputs.cache
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/BBTipsManager.Core.AssemblyInfo.cs
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/BBTipsManager.Core.csproj.CoreCompileInputs.cache
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/BBTipsManager.Core.dll
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/refint/BBTipsManager.Core.dll
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/BBTipsManager.Core.pdb
+/app/BBTipsManager/BBTipsManager.Core/obj/Debug/net8.0/ref/BBTipsManager.Core.dll
