@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
+             x:Class="BBTipsManager.App.Pages.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="Dashboard">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <!-- Header -->
+            <Label Text="Dashboard" Style="{StaticResource TitleLabel}"/>
+            <Label Text="Visao geral das suas bancas" Style="{StaticResource SubtitleLabel}"/>
+            
+            <!-- Cards de Resumo -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                
+                <!-- Saldo Total -->
+                <Frame Grid.Row="0" Grid.Column="0" Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout>
+                        <Label Text="Saldo Total" Style="{StaticResource MutedLabel}"/>
+                        <Label Text="{Binding SaldoTotal, StringFormat='R$ {0:N2}'}" 
+                               FontSize="20" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Lucro -->
+                <Frame Grid.Row="0" Grid.Column="1" Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout>
+                        <Label Text="Lucro Total" Style="{StaticResource MutedLabel}"/>
+                        <Label FontSize="20" FontAttributes="Bold">
+                            <Label.Text>
+                                <Binding Path="LucroTotal" StringFormat="R$ {0:N2}"/>
+                            </Label.Text>
+                            <Label.TextColor>
+                                <Binding Path="LucroTotal" Converter="{x:Static local:Converters.LucroPrejuizoColorConverter}"/>
+                            </Label.TextColor>
+                        </Label>
+                        <Label Text="{Binding PercentualLucro, StringFormat='{0:N1}%'}" 
+                               Style="{StaticResource MutedLabel}"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Operacoes -->
+                <Frame Grid.Row="1" Grid.Column="0" Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout>
+                        <Label Text="Operacoes" Style="{StaticResource MutedLabel}"/>
+                        <Label Text="{Binding TotalOperacoes}" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="{Binding AssertividadeMedia, StringFormat='Assertividade: {0:N1}%'}" 
+                               Style="{StaticResource MutedLabel}"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Status Bancas -->
+                <Frame Grid.Row="1" Grid.Column="1" Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout>
+                        <Label Text="Bancas" Style="{StaticResource MutedLabel}"/>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding BancasAtivas, StringFormat='{0} Ativas'}" 
+                                   TextColor="{StaticResource Success}" FontSize="12"/>
+                            <Label Text="|" TextColor="{StaticResource Gray500}" FontSize="12"/>
+                            <Label Text="{Binding BancasStopLoss, StringFormat='{0} SL'}" 
+                                   TextColor="{StaticResource Danger}" FontSize="12"/>
+                            <Label Text="|" TextColor="{StaticResource Gray500}" FontSize="12"/>
+                            <Label Text="{Binding BancasMeta, StringFormat='{0} Meta'}" 
+                                   TextColor="{StaticResource Info}" FontSize="12"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+                
+            </Grid>
+            
+            <!-- Acoes Rapidas -->
+            <Label Text="Acoes Rapidas" Style="{StaticResource SubtitleLabel}" Margin="0,16,0,8"/>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Grid.Column="0" Text="Gerenciar Bancas" 
+                        Command="{Binding NavigateToBancasCommand}"
+                        Style="{StaticResource SecondaryButton}"/>
+                <Button Grid.Column="1" Text="Simulador" 
+                        Command="{Binding NavigateToSimuladorCommand}"/>
+            </Grid>
+            
+            <!-- Lista de Bancas -->
+            <Label Text="Suas Bancas" Style="{StaticResource SubtitleLabel}" Margin="0,16,0,8"/>
+            
+            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                               IsVisible="{Binding IsLoading}"
+                               Color="{StaticResource Accent}"/>
+            
+            <CollectionView ItemsSource="{Binding Bancas}" 
+                            IsVisible="{Binding IsLoading, Converter={x:Static local:Converters.InverseBoolConverter}}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="core:Banca">
+                        <Frame Style="{StaticResource CardFrame}" Margin="0,4">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="{Binding Nome}" FontAttributes="Bold"/>
+                                    <Label Text="{Binding SaldoAtual, StringFormat='Saldo: R$ {0:N2}'}" 
+                                           Style="{StaticResource MutedLabel}"/>
+                                    <Label Text="{Binding Assertividade, StringFormat='Assertividade: {0:N1}%'}" 
+                                           Style="{StaticResource MutedLabel}"/>
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding LucroTotal, StringFormat='R$ {0:N2}'}" 
+                                           FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                                    <Label Text="{Binding PercentualLucro, StringFormat='{0:N1}%'}" 
+                                           Style="{StaticResource MutedLabel}" HorizontalTextAlignment="End"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="Nenhuma banca cadastrada" 
+                           HorizontalOptions="Center" 
+                           Style="{StaticResource MutedLabel}"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>
