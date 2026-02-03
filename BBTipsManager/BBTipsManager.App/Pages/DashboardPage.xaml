@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
-             xmlns:local="clr-namespace:BBTipsManager.App"
              xmlns:core="clr-namespace:BBTipsManager.Core.Models;assembly=BBTipsManager.Core"
              x:Class="BBTipsManager.App.Pages.DashboardPage"
              x:DataType="vm:DashboardViewModel"
@@ -31,14 +30,8 @@
                 <Frame Grid.Row="0" Grid.Column="1" Style="{StaticResource CardFrame}">
                     <VerticalStackLayout>
                         <Label Text="Lucro Total" Style="{StaticResource MutedLabel}"/>
-                        <Label FontSize="20" FontAttributes="Bold">
-                            <Label.Text>
-                                <Binding Path="LucroTotal" StringFormat="R$ {0:N2}"/>
-                            </Label.Text>
-                            <Label.TextColor>
-                                <Binding Path="LucroTotal" Converter="{x:Static local:Converters.LucroPrejuizoColorConverter}"/>
-                            </Label.TextColor>
-                        </Label>
+                        <Label Text="{Binding LucroTotal, StringFormat='R$ {0:N2}'}" 
+                               FontSize="20" FontAttributes="Bold" TextColor="{StaticResource Success}"/>
                         <Label Text="{Binding PercentualLucro, StringFormat='{0:N1}%'}" 
                                Style="{StaticResource MutedLabel}"/>
                     </VerticalStackLayout>
@@ -90,8 +83,7 @@
                                IsVisible="{Binding IsLoading}"
                                Color="{StaticResource Accent}"/>
             
-            <CollectionView ItemsSource="{Binding Bancas}" 
-                            IsVisible="{Binding IsLoading, Converter={x:Static local:Converters.InverseBoolConverter}}">
+            <CollectionView ItemsSource="{Binding Bancas}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="core:Banca">
                         <Frame Style="{StaticResource CardFrame}" Margin="0,4">

@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
-             xmlns:local="clr-namespace:BBTipsManager.App"
              xmlns:core="clr-namespace:BBTipsManager.Core.Models;assembly=BBTipsManager.Core"
              x:Class="BBTipsManager.App.Pages.BancasPage"
              x:DataType="vm:BancasViewModel"
@@ -108,12 +107,8 @@
                                     <!-- Nome e Status -->
                                     <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8">
                                         <Label Text="{Binding Nome}" FontAttributes="Bold" FontSize="16"/>
-                                        <Frame Padding="6,2" CornerRadius="4" HasShadow="False">
-                                            <Frame.BackgroundColor>
-                                                <MultiBinding Converter="{x:Static local:Converters.StatusColorConverter}">
-                                                    <Binding Path="Status"/>
-                                                </MultiBinding>
-                                            </Frame.BackgroundColor>
+                                        <Frame Padding="6,2" CornerRadius="4" HasShadow="False" 
+                                               BackgroundColor="{StaticResource Success}">
                                             <Label Text="{Binding Status}" FontSize="10" TextColor="White"/>
                                         </Frame>
                                     </HorizontalStackLayout>
