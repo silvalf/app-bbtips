@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="BBTipsManager.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:BBTipsManager.App.Pages"
+    Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutBackgroundColor="{StaticResource Primary}">
+
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="{StaticResource Primary}" HeightRequest="150" Padding="20">
+            <VerticalStackLayout VerticalOptions="Center">
+                <Label Text="BB Tips Manager" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       TextColor="White"/>
+                <Label Text="Gestao de Bancas e Padroes" 
+                       FontSize="14" 
+                       TextColor="{StaticResource Gray300}"/>
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <FlyoutItem Title="Dashboard" Icon="home.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:DashboardPage}" Route="Dashboard"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Bancas" Icon="wallet.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:BancasPage}" Route="Bancas"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Padroes" Icon="pattern.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:PadroesPage}" Route="Padroes"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Simulador" Icon="calculator.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:SimuladorPage}" Route="Simulador"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Configuracoes" Icon="settings.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:ConfiguracoesPage}" Route="Configuracoes"/>
+    </FlyoutItem>
+
+</Shell>
