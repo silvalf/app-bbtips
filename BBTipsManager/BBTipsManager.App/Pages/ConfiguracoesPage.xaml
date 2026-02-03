@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
+             x:Class="BBTipsManager.App.Pages.ConfiguracoesPage"
+             x:DataType="vm:ConfiguracoesViewModel"
+             Title="Configuracoes">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <Label Text="Configuracoes" Style="{StaticResource TitleLabel}"/>
+            
+            <!-- BB Tips Login -->
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Credenciais BB Tips" FontAttributes="Bold"/>
+                    <Label Text="Configure suas credenciais para automacao futura" 
+                           Style="{StaticResource MutedLabel}"/>
+                    
+                    <VerticalStackLayout>
+                        <Label Text="E-mail" Style="{StaticResource MutedLabel}"/>
+                        <Entry Placeholder="seu@email.com" Text="{Binding Email}" Keyboard="Email"/>
+                    </VerticalStackLayout>
+                    
+                    <VerticalStackLayout>
+                        <Label Text="Senha" Style="{StaticResource MutedLabel}"/>
+                        <Entry Placeholder="********" Text="{Binding Senha}" IsPassword="True"/>
+                    </VerticalStackLayout>
+                    
+                    <HorizontalStackLayout Spacing="20">
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox IsChecked="{Binding LembrarCredenciais}" Color="{StaticResource Accent}"/>
+                            <Label Text="Lembrar credenciais" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox IsChecked="{Binding AutoLogin}" Color="{StaticResource Accent}"/>
+                            <Label Text="Auto login" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                    
+                    <Button Text="Testar Conexao" Command="{Binding TestarConexaoCommand}"
+                            Style="{StaticResource SecondaryButton}"/>
+                </VerticalStackLayout>
+            </Frame>
+            
+            <!-- Configuracoes Gerais -->
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Configuracoes Gerais" FontAttributes="Bold"/>
+                    
+                    <HorizontalStackLayout Spacing="8">
+                        <CheckBox IsChecked="{Binding NotificacoesAtivas}" Color="{StaticResource Accent}"/>
+                        <Label Text="Notificacoes ativas" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    
+                    <HorizontalStackLayout Spacing="8">
+                        <CheckBox IsChecked="{Binding SomAlerta}" Color="{StaticResource Accent}"/>
+                        <Label Text="Som de alerta" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    
+                </VerticalStackLayout>
+            </Frame>
+            
+            <!-- Botao Salvar -->
+            <Button Text="Salvar Configuracoes" 
+                    Command="{Binding SalvarConfigCommand}"
+                    IsEnabled="{Binding IsSaving, Converter={x:Static local:Converters.InverseBoolConverter}}"/>
+            
+            <ActivityIndicator IsRunning="{Binding IsSaving}" 
+                               IsVisible="{Binding IsSaving}"
+                               Color="{StaticResource Accent}"/>
+            
+            <!-- Info -->
+            <Frame Style="{StaticResource CardFrame}" BackgroundColor="{StaticResource Secondary}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Sobre o App" FontAttributes="Bold"/>
+                    <Label Text="BB Tips Manager v1.0" Style="{StaticResource MutedLabel}"/>
+                    <Label Text="Sistema de gestao de bancas e padroes para apostas esportivas com protecao de capital e estrategias de alavancagem controlada." 
+                           Style="{StaticResource MutedLabel}"/>
+                    <Label Text="Funcionalidade de automacao sera implementada em versoes futuras." 
+                           Style="{StaticResource MutedLabel}" TextColor="{StaticResource Warning}"/>
+                </VerticalStackLayout>
+            </Frame>
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

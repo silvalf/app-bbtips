@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
+             x:Class="BBTipsManager.App.Pages.SimuladorPage"
+             x:DataType="vm:SimuladorViewModel"
+             Title="Simulador">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <Label Text="Simulador de Estrategias" Style="{StaticResource TitleLabel}"/>
+            <Label Text="Simule diferentes configuracoes antes de aplicar" Style="{StaticResource SubtitleLabel}"/>
+            
+            <!-- Inputs -->
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Parametros da Simulacao" FontAttributes="Bold"/>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Saldo Inicial" Style="{StaticResource MutedLabel}"/>
+                            <Entry Text="{Binding SaldoInicial}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Stake Base" Style="{StaticResource MutedLabel}"/>
+                            <Entry Text="{Binding StakeBase}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Odd Media" Style="{StaticResource MutedLabel}"/>
+                            <Entry Text="{Binding OddMedia}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Assertividade (%)" Style="{StaticResource MutedLabel}"/>
+                            <Entry Text="{Binding AssertividadeEsperada}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Multiplicador (Gale)" Style="{StaticResource MutedLabel}"/>
+                            <Entry Text="{Binding Multiplicador}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Max Gales" Style="{StaticResource MutedLabel}"/>
+                            <Entry Text="{Binding MaxGales}" Keyboard="Numeric"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <VerticalStackLayout>
+                        <Label Text="Estrategia" Style="{StaticResource MutedLabel}"/>
+                        <Picker ItemsSource="{Binding Estrategias}" 
+                                SelectedItem="{Binding EstrategiaSelecionada}"/>
+                    </VerticalStackLayout>
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Button Grid.Column="0" Text="Simular" 
+                                Command="{Binding SimularCommand}"/>
+                        <Button Grid.Column="1" Text="Sugerir Config" 
+                                Command="{Binding GerarSugestaoCommand}"
+                                Style="{StaticResource SecondaryButton}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+            
+            <!-- Resultados -->
+            <Frame Style="{StaticResource CardFrame}" IsVisible="{Binding ShowResultados}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Resultado da Simulacao" FontAttributes="Bold"/>
+                    
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="8">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Risco Total" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding RiscoTotal, StringFormat='R$ {0:N2}'}" 
+                                   FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Danger}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="% da Banca" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding PercentualRisco, StringFormat='{0:N1}%'}" 
+                                   FontSize="18" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                            <Label Text="Lucro Potencial" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding LucroPotencial, StringFormat='R$ {0:N2}'}" 
+                                   FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Success}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                            <Label Text="Operacoes Possiveis" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding OperacoesPossiveis}" 
+                                   FontSize="18" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <!-- Tabela de Gales -->
+                    <Label Text="Detalhamento por Gale" Style="{StaticResource SubtitleLabel}" Margin="0,8,0,0"/>
+                    
+                    <CollectionView ItemsSource="{Binding LinhasSimulacao}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="helpers:LinhaSimulacaoEstrategia">
+                                <Frame BackgroundColor="{StaticResource Secondary}" 
+                                       Padding="12" Margin="0,4" CornerRadius="8">
+                                    <Grid ColumnDefinitions="Auto,*,*,*">
+                                        <Label Grid.Column="0" 
+                                               Text="{Binding Gale, StringFormat='G{0}'}" 
+                                               FontAttributes="Bold" WidthRequest="40"/>
+                                        <VerticalStackLayout Grid.Column="1">
+                                            <Label Text="Stake" Style="{StaticResource MutedLabel}" FontSize="10"/>
+                                            <Label Text="{Binding Stake, StringFormat='R$ {0:N2}'}" FontSize="12"/>
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="2">
+                                            <Label Text="Acumulado" Style="{StaticResource MutedLabel}" FontSize="10"/>
+                                            <Label Text="{Binding StakeAcumulada, StringFormat='R$ {0:N2}'}" 
+                                                   FontSize="12" TextColor="{StaticResource Danger}"/>
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="3">
+                                            <Label Text="Lucro" Style="{StaticResource MutedLabel}" FontSize="10"/>
+                                            <Label Text="{Binding LucroSeGanhar, StringFormat='R$ {0:N2}'}" 
+                                                   FontSize="12" TextColor="{StaticResource Success}"/>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    
+                    <Button Text="Limpar" Command="{Binding LimparResultadosCommand}" 
+                            Style="{StaticResource SecondaryButton}"/>
+                </VerticalStackLayout>
+            </Frame>
+            
+            <!-- Sugestao -->
+            <Frame Style="{StaticResource CardFrame}" IsVisible="{Binding ShowSugestao}" 
+                   BorderColor="{StaticResource Success}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Sugestao de Configuracao" FontAttributes="Bold" 
+                           TextColor="{StaticResource Success}"/>
+                    
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Estrategia" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding Sugestao.EstrategiaSugerida}" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Stake Sugerida" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding Sugestao.StakeSugerida, StringFormat='R$ {0:N2}'}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                            <Label Text="Max Gales" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding Sugestao.MaxGalesSugerido}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                            <Label Text="Multiplicador" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding Sugestao.MultiplicadorSugerido, StringFormat='{0:N1}x'}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="2" Grid.Column="0">
+                            <Label Text="Stop Loss" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding Sugestao.StopLossSugerido, StringFormat='{0}%'}" 
+                                   TextColor="{StaticResource Danger}"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="2" Grid.Column="1">
+                            <Label Text="Stop Gain" Style="{StaticResource MutedLabel}"/>
+                            <Label Text="{Binding Sugestao.StopGainSugerido, StringFormat='{0}%'}" 
+                                   TextColor="{StaticResource Success}"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    
+                    <Button Text="Aplicar Sugestao" Command="{Binding AplicarSugestaoCommand}"
+                            Style="{StaticResource SuccessButton}"/>
+                </VerticalStackLayout>
+            </Frame>
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>
