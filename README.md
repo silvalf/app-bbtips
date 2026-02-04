@@ -1,68 +1,88 @@
 # BBTips App - Instruções de Execução
 
-## 🚀 Como Rodar o Projeto
+## 🌐 Ambiente de Preview (Emergent)
 
-### Opção 1: Iniciar Manualmente (Recomendado)
+Se você está vendo este projeto no ambiente Emergent, ele já está configurado e funcionando. Basta clicar nos links do menu para navegar entre as páginas.
 
-#### Backend (FastAPI + Python 3.11)
+---
 
-1. Abra um **novo PowerShell** e execute:
+## 🖥️ Como Rodar Localmente (Windows)
+
+### Pré-requisitos
+- **Python 3.11+** instalado
+- **Node.js 18+** instalado
+- **MongoDB** (opcional, para persistência de dados)
+
+### Passo 1: Configurar o Frontend
+
+1. Navegue até a pasta `frontend`
+2. **Copie o arquivo de configuração local:**
 ```powershell
-cd c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\backend
+cd frontend
+copy .env.local.example .env.local
+```
+
+3. Instale as dependências:
+```powershell
+npm install
+# ou
+yarn install
+```
+
+### Passo 2: Configurar o Backend
+
+1. Navegue até a pasta `backend`
+2. Crie e ative o virtual environment:
+```powershell
+cd backend
+python -m venv .venv311
+.\.venv311\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+3. Configure o arquivo `.env` do backend (se necessário):
+```dotenv
+MONGO_URL="mongodb://localhost:27017"
+DB_NAME="test_database"
+CORS_ORIGINS="*"
+```
+
+### Passo 3: Iniciar os Serviços
+
+#### Terminal 1 - Backend (FastAPI)
+```powershell
+cd backend
 .\.venv311\Scripts\Activate.ps1
 python -m uvicorn server:app --reload --host 127.0.0.1 --port 8000
 ```
-
 O backend estará em: **http://127.0.0.1:8000**
 
-#### Frontend (React + Node.js)
-
-2. Abra um **segundo PowerShell** e execute:
+#### Terminal 2 - Frontend (React)
 ```powershell
-cd c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\frontend
-$env:PATH = 'C:\Program Files\nodejs;' + $env:PATH
+cd frontend
 npm start
+# ou
+yarn start
 ```
-
-O frontend estará em: **http://localhost:3000** (ou próxima porta disponível)
+O frontend estará em: **http://localhost:3000**
 
 ---
 
-### Opção 2: Usar Script de Inicialização (Automático)
+## ⚙️ Configuração de Ambiente
 
-1. Na raiz do projeto, execute:
-```powershell
-.\start-servers.ps1
-```
+### Detecção Automática
+O aplicativo detecta automaticamente o ambiente:
+- **Localhost**: Usa `http://127.0.0.1:8000` como backend
+- **Preview/Produção**: Usa a URL configurada em `REACT_APP_BACKEND_URL`
 
-Isso abrirá **duas janelas PowerShell** automaticamente:
-- Uma com o backend rodando
-- Uma com o frontend rodando
+### Arquivos de Configuração
 
----
-
-## 📋 Verificação de Status
-
-Acesse **http://localhost:3000** (ou a porta exibida) e vá para a página **Home**. Você verá:
-- **Backend Status**: Verde (online) ou Vermelho (offline)
-- **Frontend Status**: Verde (sempre online)
-
----
-
-## 🔧 Configuração
-
-### Mudar a Porta do Backend
-
-Edite `frontend/.env`:
-```dotenv
-REACT_APP_BACKEND_URL=http://127.0.0.1:8000  # ajuste aqui
-```
-
-Depois reinicie o frontend.
-
-### Mudar a Porta do Frontend
-
-O frontend automaticamente usa a próxima porta disponível se 3000 estiver ocupada.
+| Arquivo | Uso |
+|---------|-----|
+| `frontend/.env` | Configuração padrão (preview/produção) |
+| `frontend/.env.local` | Configuração local (tem prioridade) |
+| `frontend/.env.local.example` | Template para criar .env.local |
+| `backend/.env` | Configuração do backend |
 
 ---
 
