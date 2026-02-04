@@ -462,12 +462,12 @@ function MainLayout() {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="flex min-h-screen bg-slate-950">
       <Sidebar />
       <MobileHeader />
       
       <main className={cn(
-        "transition-all duration-300 ease-in-out",
+        "flex-1 transition-all duration-300 ease-in-out min-h-screen",
         "pt-14 lg:pt-0", // Mobile header offset
         isCollapsed ? "lg:ml-[70px]" : "lg:ml-[260px]"
       )}>
