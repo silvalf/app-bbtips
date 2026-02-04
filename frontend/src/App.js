@@ -20,10 +20,30 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+// ============== SHARED COMPONENTS ==============
+
+const StatusIndicator = ({ status, label }) => (
+  <div className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
+    <div className={cn(
+      "w-3 h-3 rounded-full animate-pulse",
+      status === 'online' ? "bg-emerald-500" : status === 'offline' ? "bg-red-500" : "bg-amber-500"
+    )} />
+    <div>
+      <p className="text-sm font-medium text-slate-300">{label}</p>
+      <p className={cn(
+        "text-xs",
+        status === 'online' ? "text-emerald-400" : status === 'offline' ? "text-red-400" : "text-amber-400"
+      )}>
+        {status === 'online' ? 'Online' : status === 'offline' ? 'Offline' : 'Verificando...'}
+      </p>
+    </div>
+  </div>
+);
+
 // ============== PAGE COMPONENTS ==============
 
 const Home = () => {
-  const { backendStatus, frontendStatus, lastChecked, errorMessage } = useServerStatus();
+  const { backendStatus, frontendStatus, lastChecked } = useServerStatus();
   const [apiMessage, setApiMessage] = React.useState(null);
   const [wsMessages, setWsMessages] = React.useState([]);
 
@@ -58,27 +78,9 @@ const Home = () => {
     }
 
     return () => {
-      try { ws?.close(); } catch (e) {}
+      try { ws?.close(); } catch (_e) { /* ignore */ }
     };
   }, []);
-
-  const StatusIndicator = ({ status, label }) => (
-    <div className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
-      <div className={cn(
-        "w-3 h-3 rounded-full animate-pulse",
-        status === 'online' ? "bg-emerald-500" : status === 'offline' ? "bg-red-500" : "bg-amber-500"
-      )} />
-      <div>
-        <p className="text-sm font-medium text-slate-300">{label}</p>
-        <p className={cn(
-          "text-xs",
-          status === 'online' ? "text-emerald-400" : status === 'offline' ? "text-red-400" : "text-amber-400"
-        )}>
-          {status === 'online' ? 'Online' : status === 'offline' ? 'Offline' : 'Verificando...'}
-        </p>
-      </div>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
