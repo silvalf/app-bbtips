@@ -1,13 +1,28 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Função para detectar automaticamente a URL do backend
+function getBackendUrl() {
+  if (process.env.REACT_APP_BACKEND_URL) {
+    return process.env.REACT_APP_BACKEND_URL;
+  }
+  
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://127.0.0.1:8000';
+  }
+  
+  const protocol = window.location.protocol;
+  return `${protocol}//${hostname}`;
+}
+
 export function useServerStatus() {
   const [backendStatus, setBackendStatus] = useState('checking');
   const [frontendStatus, setFrontendStatus] = useState('online');
   const [lastChecked, setLastChecked] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8000';
+  const BACKEND_URL = getBackendUrl();
 
   useEffect(() => {
     // Check Backend
