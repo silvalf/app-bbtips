@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, WebSocket, WebSocketDisconnect
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -87,3 +87,18 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+
+# Simple WebSocket endpoint for dev/testing at /ws
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    logger.info("WebSocket connection accepted")
+    try:
+        while True:
+            msg = await websocket.receive_text()
+            logger.info("WebSocket received message: %s", msg)
+            # Echo back for debugging purposes
+            await websocket.send_text(f"echo: {msg}")
+    except WebSocketDisconnect:
+        logger.info("WebSocket disconnected")

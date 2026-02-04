@@ -100,6 +100,18 @@ webpackConfig.devServer = (devServerConfig) => {
     };
   }
 
+  // Ensure client.webSocketURL uses correct host/port/protocol for HMR
+  const socketProtocol = process.env.WDS_SOCKET_PROTOCOL || (process.env.HTTPS === 'true' ? 'wss' : 'ws');
+  const socketHost = process.env.WDS_SOCKET_HOST || 'localhost';
+  const socketPort = process.env.WDS_SOCKET_PORT || (socketProtocol === 'wss' ? '443' : '3003');
+  devServerConfig.client = devServerConfig.client || {};
+  devServerConfig.client.webSocketURL = {
+    protocol: socketProtocol,
+    hostname: socketHost,
+    port: Number(socketPort),
+    pathname: '/ws'
+  };
+
   return devServerConfig;
 };
 

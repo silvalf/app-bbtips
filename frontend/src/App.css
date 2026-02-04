@@ -24,6 +24,11 @@
     color: #61dafb;
 }
 
+.app-nav ul { list-style: none; padding: 0; display:flex; gap:12px }
+.app-nav a { color: #61dafb; text-decoration: none }
+.app-main { border: 2px dashed rgba(255,255,255,0.15); padding: 20px; min-height: 60vh }
+.app-nav { position: relative; z-index: 50 }
+
 @keyframes App-logo-spin {
     from {
         transform: rotate(0deg);
