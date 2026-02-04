@@ -1,9 +1,28 @@
 import axios from 'axios';
 
 // Configuração centralizada do Axios
-// Ajuste a baseURL para a porta onde o backend está rodando
+// Detecta automaticamente o ambiente (local vs preview/produção)
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8000';
+function getBackendUrl() {
+  // Se há uma variável de ambiente definida, usa ela
+  if (process.env.REACT_APP_BACKEND_URL) {
+    return process.env.REACT_APP_BACKEND_URL;
+  }
+  
+  // Detecção automática baseada no hostname
+  const hostname = window.location.hostname;
+  
+  // Se está rodando localmente (localhost ou 127.0.0.1)
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://127.0.0.1:8000';
+  }
+  
+  // Para ambientes de preview/produção, usa o mesmo host com protocolo correto
+  const protocol = window.location.protocol;
+  return `${protocol}//${hostname}`;
+}
+
+const BACKEND_URL = getBackendUrl();
 
 const api = axios.create({
   baseURL: `${BACKEND_URL}/api`,
