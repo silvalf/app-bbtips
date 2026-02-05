@@ -11,7 +11,7 @@ Usuario quer um sistema .NET MAUI para:
 - Futuramente automatizar entradas
 
 ## Credenciais
-- Email: luizsilva.perfil@gmail.com
+- Email: @email
 - Senha: @Leo102030
 
 ## Personas

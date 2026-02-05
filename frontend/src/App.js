@@ -30,14 +30,20 @@ import { toast } from "sonner";
 
 // ============== SHARED COMPONENTS ==============
 
-const StatusIndicator = ({ status, label }) => (
+const StatusIndicator = ({ status, label, href }) => (
   <div className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
     <div className={cn(
       "w-3 h-3 rounded-full animate-pulse",
       status === 'online' ? "bg-emerald-500" : status === 'offline' ? "bg-red-500" : "bg-amber-500"
     )} />
     <div>
-      <p className="text-sm font-medium text-slate-300">{label}</p>
+      {href ? (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+          {label}
+        </a>
+      ) : (
+        <p className="text-sm font-medium text-slate-300">{label}</p>
+      )}
       <p className={cn(
         "text-xs",
         status === 'online' ? "text-emerald-400" : status === 'offline' ? "text-red-400" : "text-amber-400"
@@ -108,9 +114,9 @@ const Home = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <StatusIndicator status={backendStatus} label="Backend API" />
-            <StatusIndicator status={databaseStatus} label="SQL Server" />
-            <StatusIndicator status={frontendStatus} label="Frontend" />
+            <StatusIndicator status={backendStatus} label="Backend API" href="http://127.0.0.1:8000" />
+            <StatusIndicator status={databaseStatus} label="SQL Server" href="http://127.0.0.1:8000/api/health" />
+            <StatusIndicator status={frontendStatus} label="Frontend" href="/" />
             {lastChecked && (
               <p className="text-xs text-slate-500 text-center">
                 Última verificação: {new Date(lastChecked).toLocaleTimeString()}
@@ -123,7 +129,7 @@ const Home = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-400 flex items-center gap-2">
               <Activity className="w-4 h-4" />
-              API Response
+              <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">API Response (docs)</a>
             </CardTitle>
           </CardHeader>
           <CardContent>

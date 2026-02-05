@@ -135,7 +135,7 @@ BBTipsManager/
 
 ## Credenciais BB Tips
 
-Email: luizsilva.perfil@gmail.com
+Email: @email
 Senha: @Leo102030
 
 URL: https://app.bbtips.com.br

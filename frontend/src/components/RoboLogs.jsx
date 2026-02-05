@@ -54,7 +54,7 @@ const RoboLogs = () => {
         const response = await api.get('/credenciais');
         setCredenciais(response.data || []);
         if (response.data?.length > 0) {
-          setSelectedCredencial(response.data[0].id);
+          setSelectedCredencial(response.data[0].Id);
         }
       } catch (error) {
         console.error('Erro ao carregar credenciais:', error);
@@ -198,7 +198,7 @@ const RoboLogs = () => {
             <CardTitle className="text-white flex items-center gap-2">
               🤖 Robo BB Tips - Logs em Tempo Real
             </CardTitle>
-            <p className="text-slate-400 text-sm mt-1">
+            <div className="text-slate-400 text-sm mt-1">
               {isRunning ? (
                 <Badge variant="default" className="bg-green-500/20 text-green-400 border-green-500/50">
                   ● Robô em execução
@@ -208,7 +208,7 @@ const RoboLogs = () => {
                   ○ Robô parado
                 </Badge>
               )}
-            </p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <select
@@ -219,8 +219,8 @@ const RoboLogs = () => {
             >
               <option value="">Selecione uma credencial</option>
               {credenciais.map((cred) => (
-                <option key={cred.id} value={cred.id}>
-                  {cred.nome} ({cred.email})
+                <option key={cred.Id} value={cred.Id}>
+                  ({cred.Email})
                 </option>
               ))}
             </select>

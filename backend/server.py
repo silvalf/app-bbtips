@@ -435,38 +435,13 @@ async def create_padrao(padrao: dict):
     padrao_id = padrao_repo.create(padrao)
     return {"id": padrao_id, "message": "Padrao criado com sucesso"}
 
-# Include the router in the main app
-app.include_router(api_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-# Inicializar gerenciador do robô
-from robo_bbtips import BBTipsRobo, RoboConfig, WebSocketManager, LogEntry
-import asyncio
-import json
-
-ws_manager = WebSocketManager()
+# ============ Endpoints do Robô ============
 
 # Modelo de requisição para iniciar robô
 class RoboStartRequest(BaseModel):
     CredencialId: str
     IntervaloVerificacao: int = 30
     ModoDebug: bool = False
-
-# ============ Endpoints do Robô ============
 
 @api_router.post("/robo/iniciar")
 async def iniciar_robo(request: RoboStartRequest):
@@ -519,6 +494,32 @@ async def get_robo_logs(limit: int = 100):
     if ws_manager.robo is None:
         return {"logs": []}
     return {"logs": ws_manager.robo.get_logs(limit)}
+
+# Include the router in the main app
+app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Inicializar gerenciador do robô
+from robo_bbtips import BBTipsRobo, RoboConfig, WebSocketManager, LogEntry
+import asyncio
+import json
+
+ws_manager = WebSocketManager()
+
 
 # WebSocket endpoint for real-time updates and logs
 @app.websocket("/ws")
