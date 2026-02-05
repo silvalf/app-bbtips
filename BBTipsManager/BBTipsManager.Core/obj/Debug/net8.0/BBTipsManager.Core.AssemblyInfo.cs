@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BBTipsManager.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b4ae2c73949fc38946d749079d28a02048769397")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dccf88fddd0ee41f6e7b2771eea15c30bdfee0dd")]
 [assembly: System.Reflection.AssemblyProductAttribute("BBTipsManager.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BBTipsManager.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
