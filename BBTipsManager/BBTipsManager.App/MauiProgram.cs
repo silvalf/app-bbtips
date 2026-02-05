@@ -1,6 +1,5 @@
 using BBTipsManager.Core.Interfaces;
 using BBTipsManager.Core.Services;
-using BBTipsManager.App.Services;
 using BBTipsManager.App.ViewModels;
 using BBTipsManager.App.Pages;
 using CommunityToolkit.Maui;
@@ -10,6 +9,11 @@ namespace BBTipsManager.App;
 
 public static class MauiProgram
 {
+    // Variável para escolher o tipo de storage
+    // Use "sqlserver" para usar SQL Server via API, "local" para JSON local
+    private const string STORAGE_TYPE = "sqlserver"; 
+    private const string API_BASE_URL = "http://localhost:8000/api";
+
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
@@ -22,9 +26,18 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // Data Store
-        var dataPath = Path.Combine(FileSystem.AppDataDirectory, "BBTipsData");
-        builder.Services.AddSingleton<IDataStore>(new JsonDataStore(dataPath));
+        // Configurar Data Store baseado no tipo de storage
+        if (STORAGE_TYPE == "sqlserver")
+        {
+            // Usa API com SQL Server
+            builder.Services.AddSingleton<IDataStore>(new ApiDataStore(API_BASE_URL));
+        }
+        else
+        {
+            // Usa JSON local (padrão anterior)
+            var dataPath = Path.Combine(FileSystem.AppDataDirectory, "BBTipsData");
+            builder.Services.AddSingleton<IDataStore>(new JsonDataStore(dataPath));
+        }
 
         // Services
         builder.Services.AddSingleton<IBancaService, BancaService>();

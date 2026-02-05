@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/app/BBTipsManager/BBTipsManager.Core/BBTipsManager.Core.csproj": {}
+    "C:\\Users\\luizs\\OneDrive\\Documentos\\GitHub\\app-bbtips\\BBTipsManager\\BBTipsManager.Core\\BBTipsManager.Core.csproj": {}
   },
   "projects": {
-    "/app/BBTipsManager/BBTipsManager.Core/BBTipsManager.Core.csproj": {
+    "C:\\Users\\luizs\\OneDrive\\Documentos\\GitHub\\app-bbtips\\BBTipsManager\\BBTipsManager.Core\\BBTipsManager.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/app/BBTipsManager/BBTipsManager.Core/BBTipsManager.Core.csproj",
+        "projectUniqueName": "C:\\Users\\luizs\\OneDrive\\Documentos\\GitHub\\app-bbtips\\BBTipsManager\\BBTipsManager.Core\\BBTipsManager.Core.csproj",
         "projectName": "BBTipsManager.Core",
-        "projectPath": "/app/BBTipsManager/BBTipsManager.Core/BBTipsManager.Core.csproj",
-        "packagesPath": "/root/.nuget/packages/",
-        "outputPath": "/app/BBTipsManager/BBTipsManager.Core/obj/",
+        "projectPath": "C:\\Users\\luizs\\OneDrive\\Documentos\\GitHub\\app-bbtips\\BBTipsManager\\BBTipsManager.Core\\BBTipsManager.Core.csproj",
+        "packagesPath": "C:\\Users\\luizs\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\luizs\\OneDrive\\Documentos\\GitHub\\app-bbtips\\BBTipsManager\\BBTipsManager.Core\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/root/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\luizs\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -37,7 +44,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -53,12 +61,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/app/.dotnet/sdk/8.0.417/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.309/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
