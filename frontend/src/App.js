@@ -259,6 +259,7 @@ const Bancas = () => {
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [deleteConfirm, setDeleteConfirm] = React.useState({ open: false, banca: null });
+  const [editingBanca, setEditingBanca] = React.useState(null);
 
   // Buscar bancas ao carregar
   useEffect(() => {
@@ -294,19 +295,46 @@ const Bancas = () => {
         MaxGales: 3
       };
       
-      await api.post('/bancas', payload);
-      toast.success('Banca criada com sucesso!', {
-        description: `${formData.nome} foi adicionada às suas bancas.`,
-        duration: 4000,
-      });
+      if (editingBanca) {
+        await api.put(`/bancas/${editingBanca.Id}`, payload);
+        toast.success('Banca atualizada com sucesso!', {
+          description: `${formData.nome} foi atualizada.`,
+          duration: 4000,
+        });
+      } else {
+        await api.post('/bancas', payload);
+        toast.success('Banca criada com sucesso!', {
+          description: `${formData.nome} foi adicionada às suas bancas.`,
+          duration: 4000,
+        });
+      }
+      
       setShowModal(false);
+      setEditingBanca(null);
       setFormData({ nome: '', saldoInicial: '', stopLoss: '20', stopGain: '30', stakeBase: '10,00', stakePercent: '2' });
       fetchBancas();
     } catch (error) {
-      console.error('Erro ao criar banca:', error);
+      console.error('Erro ao salvar banca:', error);
+      toast.error('Erro ao salvar banca', {
+        description: 'Tente novamente mais tarde.',
+        duration: 4000,
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEdit = (banca) => {
+    setEditingBanca(banca);
+    setFormData({
+      nome: banca.Nome || '',
+      saldoInicial: banca.SaldoInicial ? String(banca.SaldoInicial).replace('.', ',') : '',
+      stopLoss: banca.StopLoss ? String(banca.StopLoss) : '20',
+      stopGain: banca.StopGain ? String(banca.StopGain) : '30',
+      stakeBase: banca.StakeBase ? String(banca.StakeBase).replace('.', ',') : '10,00',
+      stakePercent: banca.StakePercent ? String(banca.StakePercent) : '2'
+    });
+    setShowModal(true);
   };
 
   const handleDelete = async (bancaId) => {
@@ -333,6 +361,9 @@ const Bancas = () => {
   };
   
   const formatCurrency = (value) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return 'R$ 0,00';
+    }
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
@@ -340,6 +371,9 @@ const Bancas = () => {
   };
 
   const formatPercent = (value) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0%';
+    }
     return `${value}%`;
   };
   
@@ -350,7 +384,13 @@ const Bancas = () => {
           <h1 className="text-2xl font-bold text-white">Bancas</h1>
           <p className="text-slate-400">Gerencie suas bancas de apostas</p>
         </div>
-        <Dialog open={showModal} onOpenChange={setShowModal}>
+        <Dialog open={showModal} onOpenChange={(open) => {
+          setShowModal(open);
+          if (!open) {
+            setEditingBanca(null);
+            setFormData({ nome: '', saldoInicial: '', stopLoss: '20', stopGain: '30', stakeBase: '10,00', stakePercent: '2' });
+          }
+        }}>
           <DialogTrigger asChild>
             <button className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors shadow-lg shadow-cyan-500/20 flex items-center gap-2">
               <Plus className="w-4 h-4" />
@@ -359,7 +399,7 @@ const Bancas = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[400px] bg-slate-900 border-slate-700">
             <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-white">Adicionar Banca</DialogTitle>
+              <DialogTitle className="text-xl font-semibold text-white">{editingBanca ? 'Editar Banca' : 'Adicionar Banca'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div>
@@ -539,32 +579,33 @@ const Bancas = () => {
                       <Wallet className="w-6 h-6 text-cyan-400" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{banca.nome}</h3>
+                      <h3 className="text-lg font-semibold text-white">{banca.Nome}</h3>
                       <div className="flex items-center gap-4 mt-1">
                         <span className="text-sm text-slate-400">
-                          Saldo: <span className="text-emerald-400 font-medium">{formatCurrency(banca.saldoatual)}</span>
+                          Saldo: <span className="text-emerald-400 font-medium">{formatCurrency(banca.SaldoAtual)}</span>
                         </span>
                         <span className="text-sm text-slate-400">
-                          Stop: <span className="text-red-400">{formatPercent(banca.stoploss)}</span>
+                          Stop: <span className="text-red-400">{formatPercent(banca.StopLoss)}</span>
                         </span>
                         <span className="text-sm text-slate-400">
-                          Gain: <span className="text-emerald-400">{formatPercent(banca.stopgain)}</span>
+                          Gain: <span className="text-emerald-400">{formatPercent(banca.StopGain)}</span>
                         </span>
                         <span className="text-sm text-slate-400">
-                          Stake: <span className="text-cyan-400">{formatCurrency(banca.stakebase)}</span>
+                          Stake: <span className="text-cyan-400">{formatCurrency(banca.StakeBase)}</span>
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button 
+                      onClick={() => handleEdit(banca)}
                       className="p-2 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-cyan-400"
                       title="Editar"
                     >
                       <Pencil className="w-5 h-5" />
                     </button>
                     <button 
-                      onClick={() => setDeleteConfirm({ open: true, banca: { id: banca.id, nome: banca.nome } })}
+                      onClick={() => setDeleteConfirm({ open: true, banca: { id: banca.Id, nome: banca.Nome } })}
                       className="p-2 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-red-400"
                       title="Excluir"
                     >

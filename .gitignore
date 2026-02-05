@@ -82,3 +82,5 @@ android-sdk/
 .env
 *.env
 backend-robo/.env
+backend-robo/test-local.js
+backend-robo/*.local.*
