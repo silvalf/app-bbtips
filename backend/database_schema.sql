@@ -49,6 +49,7 @@ CREATE TABLE [dbo].[Banca] (
     [StopLoss] DECIMAL(5,2) NOT NULL,
     [StopGain] DECIMAL(5,2) NOT NULL,
     [StakeBase] DECIMAL(18,2) NOT NULL,
+    [StakePercent] DECIMAL(5,2) NOT NULL DEFAULT 2.0,
     [Estrategia] INT NOT NULL,
     [Status] INT NOT NULL DEFAULT 1,
     [Mercado] INT NOT NULL,
@@ -142,4 +143,19 @@ VALUES (1, 1, 5, 'Dark');
 GO
 
 PRINT 'Banco de dados BBTipsDB criado com sucesso!';
+GO
+
+-- ============================================
+-- MIGRAÇÃO: Adicionar campo StakePercent
+-- Executar apenas se a coluna não existir
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Object_ID = Object_ID('Banca') AND name = 'StakePercent')
+BEGIN
+    ALTER TABLE Banca ADD StakePercent DECIMAL(5,2) NOT NULL DEFAULT 2.0;
+    PRINT 'Coluna StakePercent adicionada à tabela Banca!';
+END
+ELSE
+BEGIN
+    PRINT 'Coluna StakePercent já existe na tabela Banca.';
+END
 GO

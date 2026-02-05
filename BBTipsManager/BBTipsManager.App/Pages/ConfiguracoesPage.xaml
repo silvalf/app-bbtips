@@ -2,86 +2,170 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:BBTipsManager.App.ViewModels"
+             xmlns:conv="clr-namespace:BBTipsManager.App"
              x:Class="BBTipsManager.App.Pages.ConfiguracoesPage"
              x:DataType="vm:ConfiguracoesViewModel"
-             Title="Configuracoes">
-    
+             Title="Configurações">
+
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="16">
-            
-            <Label Text="Configuracoes" Style="{StaticResource TitleLabel}"/>
-            
-            <!-- BB Tips Login -->
+
+            <!-- Alerta de Feedback Visual (Snackbar Style) -->
+            <Frame IsVisible="{Binding CurrentAlertSeverity, Converter={x:Static conv:Converters.InverseBoolConverter}}"
+                   BackgroundColor="{Binding CurrentAlertSeverity, Converter={x:Static conv:Converters.SeverityToColorConverter}}"
+                   CornerRadius="8"
+                   Padding="12">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="{Binding CurrentAlertSeverity, Converter={x:Static conv:Converters.SeverityToIconConverter}}"
+                           FontSize="24"
+                           TextColor="White"
+                           VerticalOptions="Center"/>
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           FontAttributes="Bold"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <Label Text="Configurações" Style="{StaticResource TitleLabel}"/>
+
+            <!-- ========================================= -->
+            <!-- SEÇÃO: Credenciais BB Tips (Grid) -->
+            <!-- ========================================= -->
             <Frame Style="{StaticResource CardFrame}">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Credenciais BB Tips" FontAttributes="Bold"/>
-                    <Label Text="Configure suas credenciais para automacao futura" 
-                           Style="{StaticResource MutedLabel}"/>
-                    
-                    <VerticalStackLayout>
-                        <Label Text="E-mail" Style="{StaticResource MutedLabel}"/>
-                        <Entry Placeholder="seu@email.com" Text="{Binding Email}" Keyboard="Email"/>
-                    </VerticalStackLayout>
-                    
-                    <VerticalStackLayout>
-                        <Label Text="Senha" Style="{StaticResource MutedLabel}"/>
-                        <Entry Placeholder="********" Text="{Binding Senha}" IsPassword="True"/>
-                    </VerticalStackLayout>
-                    
-                    <HorizontalStackLayout Spacing="20">
-                        <HorizontalStackLayout Spacing="8">
-                            <CheckBox IsChecked="{Binding LembrarCredenciais}" Color="{StaticResource Accent}"/>
-                            <Label Text="Lembrar credenciais" VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
-                        <HorizontalStackLayout Spacing="8">
-                            <CheckBox IsChecked="{Binding AutoLogin}" Color="{StaticResource Accent}"/>
-                            <Label Text="Auto login" VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
-                    </HorizontalStackLayout>
-                    
-                    <Button Text="Testar Conexao" Command="{Binding TestarConexaoCommand}"
-                            Style="{StaticResource SecondaryButton}"/>
+                    <Label Text="🔐 Credenciais BB Tips" FontAttributes="Bold" FontSize="18"/>
+                    <Label Text="Gerencie suas credenciais de acesso" Style="{StaticResource MutedLabel}"/>
+
+                    <!-- Grid de Credenciais -->
+                    <CollectionView ItemsSource="{Binding Credenciais}" 
+                                    HeightRequest="150"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding CredencialSelecionada}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="8" Margin="0,4" BackgroundColor="{Binding EhPrincipal, Converter={x:Static conv:Converters.BoolToAccentColorConverter}}">
+                                    <HorizontalStackLayout Spacing="8">
+                                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                                            <Label Text="{Binding Nome}" FontAttributes="Bold"/>
+                                            <Label Text="{Binding Email}" Style="{StaticResource MutedLabel}" FontSize="12"/>
+                                        </VerticalStackLayout>
+                                        <Label Text="⭐" IsVisible="{Binding EhPrincipal}" VerticalOptions="Center"/>
+                                        <Button Text="✏️" FontSize="14" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ConfiguracoesViewModel}}, Path=SelecionarCredencialCommand}"
+                                                CommandParameter="{Binding .}"
+                                                WidthRequest="36" HeightRequest="36" Padding="0"/>
+                                        <Button Text="🗑️" FontSize="14" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ConfiguracoesViewModel}}, Path=ExcluirCredencialCommand}"
+                                                CommandParameter="{Binding .}"
+                                                WidthRequest="36" HeightRequest="36" Padding="0"/>
+                                    </HorizontalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Formulário de Nova/Edição Credencial -->
+                    <Frame BackgroundColor="{StaticResource Secondary}" Padding="12" CornerRadius="8">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding CredencialSelecionada, Converter={x:Static conv:Converters.NullToTextConverter}, ConverterParameter='Nova Credencial|Edição: '}" 
+                                   FontAttributes="Bold"/>
+
+                            <Entry Placeholder="Nome identificador" Text="{Binding CredencialNome}"/>
+                            <Entry Placeholder="E-mail" Text="{Binding CredencialEmail}" Keyboard="Email"/>
+                            <Entry Placeholder="Senha" Text="{Binding CredencialSenha}" IsPassword="True"/>
+                            <Entry Placeholder="URL Base" Text="{Binding CredencialUrlBase}"/>
+
+                            <HorizontalStackLayout Spacing="20">
+                                <VerticalStackLayout>
+                                    <Label Text="Timeout (s)" FontSize="12" Style="{StaticResource MutedLabel}"/>
+                                    <Entry Keyboard="Numeric" Text="{Binding CredencialTimeoutSegundos}" WidthRequest="80"/>
+                                </VerticalStackLayout>
+                                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                    <CheckBox IsChecked="{Binding CredencialModoDebug}" Color="{StaticResource Accent}"/>
+                                    <Label Text="Debug" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                    <CheckBox IsChecked="{Binding CredencialEhPrincipal}" Color="{StaticResource Accent}"/>
+                                    <Label Text="Principal" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                                <Button Text="🧹 Limpar" Command="{Binding LimparFormularioCredencialCommand}" Style="{StaticResource SecondaryButton}"/>
+                                <Button Text="💾 Salvar" Command="{Binding SalvarCredencialCommand}"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
                 </VerticalStackLayout>
             </Frame>
-            
-            <!-- Configuracoes Gerais -->
+
+            <!-- ========================================= -->
+            <!-- SEÇÃO: Configurações Gerais -->
+            <!-- ========================================= -->
             <Frame Style="{StaticResource CardFrame}">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Configuracoes Gerais" FontAttributes="Bold"/>
-                    
+                    <Label Text="⚙️ Configurações Gerais" FontAttributes="Bold" FontSize="18"/>
+
+                    <!-- Notificações -->
+                    <Label Text="Notificações" FontAttributes="Bold" FontSize="14" Margin="0,8,0,4"/>
                     <HorizontalStackLayout Spacing="8">
                         <CheckBox IsChecked="{Binding NotificacoesAtivas}" Color="{StaticResource Accent}"/>
-                        <Label Text="Notificacoes ativas" VerticalOptions="Center"/>
+                        <Label Text="Notificações ativas" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
-                    
                     <HorizontalStackLayout Spacing="8">
                         <CheckBox IsChecked="{Binding SomAlerta}" Color="{StaticResource Accent}"/>
                         <Label Text="Som de alerta" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
-                    
+
+                    <!-- Auto-refresh -->
+                    <VerticalStackLayout>
+                        <Label Text="Auto-refresh (segundos)" Style="{StaticResource MutedLabel}"/>
+                        <Entry Keyboard="Numeric" Text="{Binding IntervaloAtualizacao}"/>
+                    </VerticalStackLayout>
+
+                    <!-- Aparência -->
+                    <Label Text="Aparência" FontAttributes="Bold" FontSize="14" Margin="0,8,0,4"/>
+                    <VerticalStackLayout>
+                        <Label Text="Tema" Style="{StaticResource MutedLabel}"/>
+                        <Picker SelectedItem="{Binding TemaAplicacao}">
+                            <Picker.Items>
+                                <x:String>Dark</x:String>
+                                <x:String>Light</x:String>
+                                <x:String>System</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </VerticalStackLayout>
+                    <HorizontalStackLayout Spacing="8">
+                        <CheckBox IsChecked="{Binding IniciarComWindows}" Color="{StaticResource Accent}"/>
+                        <Label Text="Iniciar com Windows" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Botão Salvar Configurações Gerais -->
+                    <Button Text="💾 Salvar Configurações Gerais" 
+                            Command="{Binding SalvarConfiguracoesGeraisCommand}"
+                            HeightRequest="45"
+                            Margin="0,8,0,0"/>
                 </VerticalStackLayout>
             </Frame>
-            
-            <!-- Botao Salvar -->
-            <Button Text="Salvar Configuracoes" Command="{Binding SalvarConfigCommand}"/>
-            
-            <ActivityIndicator IsRunning="{Binding IsSaving}" 
-                               IsVisible="{Binding IsSaving}"
-                               Color="{StaticResource Accent}"/>
-            
-            <!-- Info -->
+
+            <!-- ========================================= -->
+            <!-- SEÇÃO: Sobre -->
+            <!-- ========================================= -->
             <Frame Style="{StaticResource CardFrame}" BackgroundColor="{StaticResource Secondary}">
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Sobre o App" FontAttributes="Bold"/>
+                    <Label Text="ℹ️ Sobre o App" FontAttributes="Bold"/>
                     <Label Text="BB Tips Manager v1.0" Style="{StaticResource MutedLabel}"/>
-                    <Label Text="Sistema de gestao de bancas e padroes para apostas esportivas com protecao de capital e estrategias de alavancagem controlada." 
+                    <Label Text="Sistema de gestão de bancas e padrões para apostas esportivas com proteção de capital e estratégias de alavancagem controlada." 
                            Style="{StaticResource MutedLabel}"/>
-                    <Label Text="Funcionalidade de automacao sera implementada em versoes futuras." 
-                           Style="{StaticResource MutedLabel}" TextColor="{StaticResource Warning}"/>
                 </VerticalStackLayout>
             </Frame>
-            
+
+            <ActivityIndicator IsRunning="{Binding IsSaving}"
+                               IsVisible="{Binding IsSaving}"
+                               Color="{StaticResource Accent}"/>
+
         </VerticalStackLayout>
     </ScrollView>
-    
+
 </ContentPage>

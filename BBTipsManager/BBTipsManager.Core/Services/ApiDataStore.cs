@@ -30,12 +30,12 @@ public class ApiDataStore : IDataStore
         try
         {
             // Configurações estão em endpoints específicos
-            if (typeof(T) == typeof(ConfiguracaoBBTips))
+            if (typeof(T) == typeof(CredencialBBTips))
             {
-                var response = await _httpClient.GetAsync("/config/bbtips");
+                var response = await _httpClient.GetAsync("/api/credenciais/principal");
                 if (response.IsSuccessStatusCode)
                 {
-                    var config = await response.Content.ReadFromJsonAsync<ConfiguracaoBBTips>(_jsonOptions);
+                    var config = await response.Content.ReadFromJsonAsync<CredencialBBTips>(_jsonOptions);
                     return config as T;
                 }
                 return null;
@@ -43,7 +43,7 @@ public class ApiDataStore : IDataStore
             
             if (typeof(T) == typeof(ConfiguracaoGeral))
             {
-                var response = await _httpClient.GetAsync("/config/geral");
+                var response = await _httpClient.GetAsync("/api/config/geral");
                 if (response.IsSuccessStatusCode)
                 {
                     var config = await response.Content.ReadFromJsonAsync<ConfiguracaoGeral>(_jsonOptions);
@@ -64,31 +64,33 @@ public class ApiDataStore : IDataStore
     {
         try
         {
-            if (value is ConfiguracaoBBTips configBBTips)
+            if (value is CredencialBBTips credencial)
             {
-                var response = await _httpClient.PutAsJsonAsync("/config/bbtips", new
+                var response = await _httpClient.PutAsJsonAsync($"/api/credenciais/{credencial.Id}", new
                 {
-                    configBBTips.Email,
-                    configBBTips.Senha,
-                    configBBTips.UrlBase,
-                    configBBTips.LembrarCredenciais,
-                    configBBTips.AutoLogin,
-                    configBBTips.TimeoutSegundos,
-                    configBBTips.ModoDebug
+                    credencial.Nome,
+                    credencial.Email,
+                    credencial.Senha,
+                    credencial.UrlBase,
+                    credencial.TimeoutSegundos,
+                    credencial.ModoDebug,
+                    credencial.EhPrincipal,
+                    credencial.Ativa
                 });
                 return response.IsSuccessStatusCode;
             }
             
             if (value is ConfiguracaoGeral configGeral)
             {
-                var response = await _httpClient.PutAsJsonAsync("/config/geral", new
+                var response = await _httpClient.PutAsJsonAsync("/api/config/geral", new
                 {
                     configGeral.NotificacoesAtivas,
                     configGeral.SomAlerta,
                     configGeral.IntervaloAtualizacao,
                     configGeral.TemaAplicacao,
                     configGeral.IniciarComWindows,
-                    configGeral.CaminhoBancoDados
+                    configGeral.CaminhoBancoDados,
+                    CredencialBBTipsId = configGeral.CredencialBBTipsId?.ToString()
                 });
                 return response.IsSuccessStatusCode;
             }
@@ -110,6 +112,16 @@ public class ApiDataStore : IDataStore
     {
         try
         {
+            if (collectionName == "credenciais")
+            {
+                var response = await _httpClient.GetAsync("/api/credenciais");
+                if (response.IsSuccessStatusCode)
+                {
+                    var credenciais = await response.Content.ReadFromJsonAsync<List<CredencialBBTips>>(_jsonOptions);
+                    return credenciais as List<T> ?? new List<T>();
+                }
+            }
+
             if (collectionName == "bancas")
             {
                 var response = await _httpClient.GetAsync("/bancas");
@@ -138,6 +150,22 @@ public class ApiDataStore : IDataStore
     {
         try
         {
+            if (collectionName == "credenciais" && item is CredencialBBTips credencial)
+            {
+                var response = await _httpClient.PostAsJsonAsync("/api/credenciais", new
+                {
+                    credencial.Nome,
+                    credencial.Email,
+                    credencial.Senha,
+                    credencial.UrlBase,
+                    credencial.TimeoutSegundos,
+                    credencial.ModoDebug,
+                    credencial.EhPrincipal,
+                    credencial.Ativa
+                });
+                return response.IsSuccessStatusCode;
+            }
+
             if (collectionName == "bancas" && item is Banca banca)
             {
                 var response = await _httpClient.PostAsJsonAsync("/bancas", new
@@ -167,6 +195,22 @@ public class ApiDataStore : IDataStore
     {
         try
         {
+            if (collectionName == "credenciais" && item is CredencialBBTips credencial)
+            {
+                var response = await _httpClient.PutAsJsonAsync($"/api/credenciais/{id:N}", new
+                {
+                    credencial.Nome,
+                    credencial.Email,
+                    credencial.Senha,
+                    credencial.UrlBase,
+                    credencial.TimeoutSegundos,
+                    credencial.ModoDebug,
+                    credencial.EhPrincipal,
+                    credencial.Ativa
+                });
+                return response.IsSuccessStatusCode;
+            }
+
             if (collectionName == "bancas" && item is Banca banca)
             {
                 var response = await _httpClient.PutAsJsonAsync($"/bancas/{id:N}", new
@@ -198,6 +242,12 @@ public class ApiDataStore : IDataStore
     {
         try
         {
+            if (collectionName == "credenciais")
+            {
+                var response = await _httpClient.DeleteAsync($"/api/credenciais/{id:N}");
+                return response.IsSuccessStatusCode;
+            }
+
             if (collectionName == "bancas")
             {
                 var response = await _httpClient.DeleteAsync($"/bancas/{id:N}");
@@ -205,6 +255,20 @@ public class ApiDataStore : IDataStore
             }
 
             return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // Métodos específicos para credenciais
+    public async Task<bool> DefinirCredencialPrincipalAsync(Guid credencialId)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsync($"/api/credenciais/{credencialId}/definir-principal", null);
+            return response.IsSuccessStatusCode;
         }
         catch
         {

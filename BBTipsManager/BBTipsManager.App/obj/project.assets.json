@@ -35500,22 +35500,6 @@
             "version": "[8.0.23, 8.0.23]"
           },
           {
-            "name": "Microsoft.NETCore.App.Runtime.Mono.android-arm",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.Mono.android-arm64",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.Mono.android-x64",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.Mono.android-x86",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
             "name": "Microsoft.WindowsDesktop.App.Ref",
             "version": "[8.0.23, 8.0.23]"
           }
@@ -35586,10 +35570,6 @@
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.Mono.iossimulator-x64",
             "version": "[8.0.23, 8.0.23]"
           },
           {
@@ -35664,10 +35644,6 @@
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.Mono.maccatalyst-x64",
             "version": "[8.0.23, 8.0.23]"
           },
           {

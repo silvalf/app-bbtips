@@ -9,7 +9,7 @@ Write-Host "BBTips App iniciado!" -ForegroundColor Green
 
 # Iniciar Backend em nova janela
 Write-Host "Iniciando Backend (FastAPI)..." -ForegroundColor Cyan
-$backendScript = "Set-Location '$backendPath'; .\.venv311\Scripts\Activate.ps1; Write-Host 'Backend iniciando em http://127.0.0.1:8000' -ForegroundColor Green; python -m uvicorn server:app --reload --host 127.0.0.1 --port 8000"
+$backendScript = "Set-Location '$backendPath'; .\.venv311\Scripts\python.exe -m pip install pyodbc --quiet; Write-Host 'Backend iniciando em http://127.0.0.1:8000' -ForegroundColor Green; .\.venv311\Scripts\python.exe -m uvicorn server:app --reload --host 127.0.0.1 --port 8000"
 Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", $backendScript
 
 # Aguardar um pouco para o backend iniciar

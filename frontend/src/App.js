@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import { createWebSocket } from "./lib/ws";
 import { useServerStatus } from "./hooks/useServerStatus";
+import RoboLogs from "@/components/RoboLogs";
 import { 
   Activity, 
   Server, 
@@ -15,10 +16,17 @@ import {
   FileText,
   Calculator,
   Settings,
-  ChevronRight
+  ChevronRight,
+  Pencil,
+  Trash2,
+  Plus,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 // ============== SHARED COMPONENTS ==============
 
@@ -43,7 +51,7 @@ const StatusIndicator = ({ status, label }) => (
 // ============== PAGE COMPONENTS ==============
 
 const Home = () => {
-  const { backendStatus, frontendStatus, lastChecked } = useServerStatus();
+  const { backendStatus, frontendStatus, databaseStatus, lastChecked } = useServerStatus();
   const [apiMessage, setApiMessage] = React.useState(null);
   const [wsMessages, setWsMessages] = React.useState([]);
 
@@ -101,6 +109,7 @@ const Home = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <StatusIndicator status={backendStatus} label="Backend API" />
+            <StatusIndicator status={databaseStatus} label="SQL Server" />
             <StatusIndicator status={frontendStatus} label="Frontend" />
             {lastChecked && (
               <p className="text-xs text-slate-500 text-center">
@@ -231,7 +240,102 @@ const Dashboard = () => {
 };
 
 const Bancas = () => {
-  useEffect(() => console.log('Bancas mounted'), []);
+  const [showModal, setShowModal] = React.useState(false);
+  const [bancas, setBancas] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [formData, setFormData] = React.useState({
+    nome: '',
+    saldoInicial: '',
+    stopLoss: '20',
+    stopGain: '30',
+    stakeBase: '10,00',
+    stakePercent: '2'
+  });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [deleteConfirm, setDeleteConfirm] = React.useState({ open: false, banca: null });
+
+  // Buscar bancas ao carregar
+  useEffect(() => {
+    fetchBancas();
+  }, []);
+
+  const fetchBancas = async () => {
+    try {
+      const response = await api.get('/bancas');
+      setBancas(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar bancas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const payload = {
+        Nome: formData.nome,
+        SaldoInicial: parseFloat(formData.saldoInicial.replace(',', '.')),
+        StopLoss: parseFloat(formData.stopLoss),
+        StopGain: parseFloat(formData.stopGain),
+        StakeBase: parseFloat(formData.stakeBase.replace(',', '.')),
+        StakePercent: parseFloat(formData.stakePercent),
+        Mercado: 1,
+        Estrategia: 2,
+        Multiplicador: 2,
+        MaxGales: 3
+      };
+      
+      await api.post('/bancas', payload);
+      toast.success('Banca criada com sucesso!', {
+        description: `${formData.nome} foi adicionada às suas bancas.`,
+        duration: 4000,
+      });
+      setShowModal(false);
+      setFormData({ nome: '', saldoInicial: '', stopLoss: '20', stopGain: '30', stakeBase: '10,00', stakePercent: '2' });
+      fetchBancas();
+    } catch (error) {
+      console.error('Erro ao criar banca:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (bancaId) => {
+    try {
+      await api.delete(`/bancas/${bancaId}`);
+      toast.success('Banca excluída com sucesso!', {
+        description: 'A banca foi removida das suas configurações.',
+        duration: 4000,
+      });
+      setDeleteConfirm({ open: false, banca: null });
+      fetchBancas();
+    } catch (error) {
+      toast.error('Erro ao excluir banca', {
+        description: 'Tente novamente mais tarde.',
+        duration: 4000,
+      });
+      console.error('Erro ao excluir banca:', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  const formatPercent = (value) => {
+    return `${value}%`;
+  };
   
   return (
     <div className="space-y-6">
@@ -240,22 +344,233 @@ const Bancas = () => {
           <h1 className="text-2xl font-bold text-white">Bancas</h1>
           <p className="text-slate-400">Gerencie suas bancas de apostas</p>
         </div>
-        <button className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors">
-          + Nova Banca
-        </button>
+        <Dialog open={showModal} onOpenChange={setShowModal}>
+          <DialogTrigger asChild>
+            <button className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              Nova Banca
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[400px] bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold text-white">Adicionar Banca</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+              <div>
+                <label className="text-sm text-slate-300 block mb-2">Nome da Banca</label>
+                <Input
+                  name="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  placeholder="Nome da Banca"
+                  className="bg-slate-800 border-slate-600 text-white placeholder-slate-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm text-slate-300 block mb-2">Saldo Inicial</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">R$</span>
+                  <Input
+                    name="saldoInicial"
+                    type="text"
+                    inputMode="decimal"
+                    value={formData.saldoInicial}
+                    onChange={handleChange}
+                    placeholder="0,00"
+                    className="pl-10 bg-slate-800 border-slate-600 text-white placeholder-slate-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm text-slate-300 block mb-2">Stop Loss %</label>
+                  <div className="relative">
+                    <Input
+                      name="stopLoss"
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.stopLoss}
+                      onChange={handleChange}
+                      className="pr-8 bg-slate-800 border-slate-600 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                      required
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">%</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-slate-300 block mb-2">Stop Gain %</label>
+                  <div className="relative">
+                    <Input
+                      name="stopGain"
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.stopGain}
+                      onChange={handleChange}
+                      className="pr-8 bg-slate-800 border-slate-600 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                      required
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm text-slate-300 block mb-2">Stake Base</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">R$</span>
+                    <Input
+                      name="stakeBase"
+                      type="text"
+                      inputMode="decimal"
+                      value={formData.stakeBase}
+                      onChange={handleChange}
+                      placeholder="10,00"
+                      className="pl-10 bg-slate-800 border-slate-600 text-white placeholder-slate-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-slate-300 block mb-2">% sobre Banca</label>
+                  <div className="relative">
+                    <Input
+                      name="stakePercent"
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.stakePercent}
+                      onChange={handleChange}
+                      className="pr-8 bg-slate-800 border-slate-600 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                      required
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : null}
+                  {isSubmitting ? 'Salvando...' : 'Salvar'}
+                </button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <Card className="bg-slate-800/50 border-slate-700/50">
-        <CardContent className="p-12">
-          <div className="flex flex-col items-center justify-center text-center">
-            <Wallet className="w-12 h-12 text-slate-600 mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">Nenhuma banca cadastrada</h3>
-            <p className="text-slate-400 max-w-sm">
-              Crie sua primeira banca para começar a gerenciar suas apostas com controle de risco.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Diálogo de confirmação de exclusão */}
+      <Dialog open={deleteConfirm.open} onOpenChange={(open) => setDeleteConfirm({ open, banca: null })}>
+        <DialogContent className="sm:max-w-[350px] bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-white">Excluir Banca</DialogTitle>
+          </DialogHeader>
+          <p className="text-slate-300 mt-4">
+            Tem certeza que deseja excluir a banca <span className="font-semibold text-white">{deleteConfirm.banca?.nome}</span>?
+            <br /><br />
+            Esta ação não pode ser desfeita e todas as operações relacionadas serão perdidas.
+          </p>
+          <DialogFooter className="flex gap-3 pt-4">
+            <button
+              onClick={() => setDeleteConfirm({ open: false, banca: null })}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={() => deleteConfirm.banca && handleDelete(deleteConfirm.banca.id)}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors"
+            >
+              Excluir
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Grid de Bancas */}
+      {loading ? (
+        <Card className="bg-slate-800/50 border-slate-700/50">
+          <CardContent className="p-12">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-slate-400">Carregando bancas...</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : bancas.length === 0 ? (
+        <Card className="bg-slate-800/50 border-slate-700/50">
+          <CardContent className="p-12">
+            <div className="flex flex-col items-center justify-center text-center">
+              <Wallet className="w-12 h-12 text-slate-600 mb-4" />
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma banca cadastrada</h3>
+              <p className="text-slate-400 max-w-sm">
+                Crie sua primeira banca para começar a gerenciar suas apostas com controle de risco.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {bancas.map((banca) => (
+            <Card key={banca.id} className="bg-slate-800/50 border-slate-700/50 hover:border-slate-600 transition-colors">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                      <Wallet className="w-6 h-6 text-cyan-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">{banca.nome}</h3>
+                      <div className="flex items-center gap-4 mt-1">
+                        <span className="text-sm text-slate-400">
+                          Saldo: <span className="text-emerald-400 font-medium">{formatCurrency(banca.saldoatual)}</span>
+                        </span>
+                        <span className="text-sm text-slate-400">
+                          Stop: <span className="text-red-400">{formatPercent(banca.stoploss)}</span>
+                        </span>
+                        <span className="text-sm text-slate-400">
+                          Gain: <span className="text-emerald-400">{formatPercent(banca.stopgain)}</span>
+                        </span>
+                        <span className="text-sm text-slate-400">
+                          Stake: <span className="text-cyan-400">{formatCurrency(banca.stakebase)}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      className="p-2 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-cyan-400"
+                      title="Editar"
+                    >
+                      <Pencil className="w-5 h-5" />
+                    </button>
+                    <button 
+                      onClick={() => setDeleteConfirm({ open: true, banca: { id: banca.id, nome: banca.nome } })}
+                      className="p-2 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-red-400"
+                      title="Excluir"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -341,8 +656,11 @@ const Simulador = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-white">Simulador</h1>
-        <p className="text-slate-400">Simule estratégias antes de aplicar</p>
+        <p className="text-slate-400">Simule estratégias antes de aplicar ou execute o robô de automação</p>
       </div>
+
+      {/* Componente de Logs do Robô */}
+      <RoboLogs />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-slate-800/50 border-slate-700/50">
@@ -388,8 +706,124 @@ const Simulador = () => {
 };
 
 const Configuracoes = () => {
-  useEffect(() => console.log('Configuracoes mounted'), []);
+  const [bbtipsConfig, setBbtipsConfig] = React.useState(null);
+  const [geralConfig, setGeralConfig] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [savingBbtips, setSavingBbtips] = React.useState(false);
+  const [savingGeral, setSavingGeral] = React.useState(false);
   
+  // Form states
+  const [email, setEmail] = React.useState('');
+  const [senha, setSenha] = React.useState('');
+  const [urlBase, setUrlBase] = React.useState('https://app.bbtips.com.br');
+  const [notificacoes, setNotificacoes] = React.useState(true);
+  const [autoRefresh, setAutoRefresh] = React.useState(true);
+
+  useEffect(() => {
+    fetchConfigs();
+  }, []);
+
+  const fetchConfigs = async () => {
+    try {
+      const [bbtips, geral] = await Promise.all([
+        api.get('/config/bbtips'),
+        api.get('/config/geral')
+      ]);
+      
+      if (bbtips.data && !bbtips.data.error) {
+        setBbtipsConfig(bbtips.data);
+        setEmail(bbtips.data.email || '');
+        setSenha(bbtips.data.senha || '');
+        setUrlBase(bbtips.data.urlbase || 'https://app.bbtips.com.br');
+      }
+      
+      if (geral.data && !geral.data.error) {
+        setGeralConfig(geral.data);
+        setNotificacoes(geral.data.notificacoesativas ?? true);
+        setAutoRefresh(geral.data.autologin ?? true);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar configurações:', error);
+      toast.error('Erro ao carregar configurações', {
+        description: 'Tente novamente mais tarde.',
+        duration: 4000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveBbtips = async () => {
+    setSavingBbtips(true);
+    try {
+      await api.put('/config/bbtips', {
+        Email: email,
+        Senha: senha,
+        UrlBase: urlBase,
+        LembrarCredenciais: false,
+        AutoLogin: false,
+        TimeoutSegundos: 30,
+        ModoDebug: false
+      });
+      toast.success('Credenciais salvas!', {
+        description: 'Suas credenciais do BB Tips foram atualizadas.',
+        duration: 4000,
+      });
+    } catch (error) {
+      console.error('Erro ao salvar credenciais:', error);
+      toast.error('Erro ao salvar credenciais', {
+        description: 'Tente novamente mais tarde.',
+        duration: 4000,
+      });
+    } finally {
+      setSavingBbtips(false);
+    }
+  };
+
+  const handleSaveGeral = async () => {
+    setSavingGeral(true);
+    try {
+      await api.put('/config/geral', {
+        NotificacoesAtivas: notificacoes,
+        SomAlerta: true,
+        IntervaloAtualizacao: 5,
+        TemaAplicacao: 'Dark',
+        IniciarComWindows: false
+      });
+      toast.success('Preferências salvas!', {
+        description: 'Suas preferências foram atualizadas.',
+        duration: 4000,
+      });
+    } catch (error) {
+      console.error('Erro ao salvar preferências:', error);
+      toast.error('Erro ao salvar preferências', {
+        description: 'Tente novamente mais tarde.',
+        duration: 4000,
+      });
+    } finally {
+      setSavingGeral(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Configurações</h1>
+          <p className="text-slate-400">Gerencie as configurações do aplicativo</p>
+        </div>
+        <Card className="bg-slate-800/50 border-slate-700/50">
+          <CardContent className="p-12">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-slate-400">Carregando configurações...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -406,22 +840,43 @@ const Configuracoes = () => {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm text-slate-400 block mb-2">Email</label>
-              <input 
-                type="email" 
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                className="bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-cyan-500"
               />
             </div>
             <div>
               <label className="text-sm text-slate-400 block mb-2">Senha</label>
-              <input 
-                type="password" 
+              <Input
+                type="password"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                className="bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-cyan-500"
               />
             </div>
-            <button className="w-full px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors">
-              Salvar Credenciais
+            <div>
+              <label className="text-sm text-slate-400 block mb-2">URL Base</label>
+              <Input
+                type="text"
+                value={urlBase}
+                onChange={(e) => setUrlBase(e.target.value)}
+                placeholder="https://app.bbtips.com.br"
+                className="bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-cyan-500"
+              />
+            </div>
+            <button
+              onClick={handleSaveBbtips}
+              disabled={savingBbtips}
+              className="w-full px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {savingBbtips ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : null}
+              {savingBbtips ? 'Salvando...' : 'Salvar Credenciais'}
             </button>
           </CardContent>
         </Card>
@@ -431,19 +886,43 @@ const Configuracoes = () => {
             <CardTitle className="text-white">Preferências</CardTitle>
             <CardDescription>Personalize sua experiência</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <span className="text-slate-300">Notificações</span>
-              <div className="w-12 h-6 bg-slate-700 rounded-full relative cursor-pointer">
-                <div className="w-5 h-5 bg-slate-400 rounded-full absolute top-0.5 left-0.5"></div>
-              </div>
+              <button
+                onClick={() => setNotificacoes(!notificacoes)}
+                className={`w-12 h-6 rounded-full relative transition-colors ${
+                  notificacoes ? 'bg-cyan-500' : 'bg-slate-700'
+                }`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all ${
+                  notificacoes ? 'left-6' : 'left-0.5'
+                }`}></div>
+              </button>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-300">Auto-refresh</span>
-              <div className="w-12 h-6 bg-cyan-500 rounded-full relative cursor-pointer">
-                <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5"></div>
-              </div>
+              <button
+                onClick={() => setAutoRefresh(!autoRefresh)}
+                className={`w-12 h-6 rounded-full relative transition-colors ${
+                  autoRefresh ? 'bg-cyan-500' : 'bg-slate-700'
+                }`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all ${
+                  autoRefresh ? 'left-6' : 'left-0.5'
+                }`}></div>
+              </button>
             </div>
+            <button
+              onClick={handleSaveGeral}
+              disabled={savingGeral}
+              className="w-full px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {savingGeral ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : null}
+              {savingGeral ? 'Salvando...' : 'Salvar Preferências'}
+            </button>
           </CardContent>
         </Card>
       </div>

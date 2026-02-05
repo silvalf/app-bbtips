@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any
 from contextlib import contextmanager
 import logging
+import uuid
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -70,6 +71,186 @@ class SQLServerConnection:
             return False
 
 
+class CredencialBBTipsRepository:
+    """Repositório para operações com Credenciais BB Tips"""
+    
+    def __init__(self, connection: SQLServerConnection):
+        self.conn = connection
+    
+    def get_all(self) -> List[Dict[str, Any]]:
+        """Retorna todas as credenciais"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT Id, Nome, Email, Senha, UrlBase, TimeoutSegundos, ModoDebug,
+                       EhPrincipal, Ativa, DataCriacao, DataAtualizacao
+                FROM CredencialBBTips
+                ORDER BY EhPrincipal DESC, DataCriacao DESC
+            """)
+            rows = cursor.fetchall()
+            
+            credenciais = []
+            for row in rows:
+                credenciais.append({
+                    'Id': str(row.Id),
+                    'Nome': row.Nome,
+                    'Email': row.Email,
+                    'Senha': row.Senha,
+                    'UrlBase': row.UrlBase,
+                    'TimeoutSegundos': row.TimeoutSegundos,
+                    'ModoDebug': bool(row.ModoDebug),
+                    'EhPrincipal': bool(row.EhPrincipal),
+                    'Ativa': bool(row.Ativa),
+                    'DataCriacao': row.DataCriacao.isoformat() if row.DataCriacao else None,
+                    'DataAtualizacao': row.DataAtualizacao.isoformat() if row.DataAtualizacao else None
+                })
+            return credenciais
+    
+    def get_by_id(self, credencial_id: str) -> Optional[Dict[str, Any]]:
+        """Retorna uma credencial pelo ID"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT Id, Nome, Email, Senha, UrlBase, TimeoutSegundos, ModoDebug,
+                       EhPrincipal, Ativa, DataCriacao, DataAtualizacao
+                FROM CredencialBBTips
+                WHERE Id = ?
+            """, (credencial_id,))
+            row = cursor.fetchone()
+            
+            if row:
+                return {
+                    'Id': str(row.Id),
+                    'Nome': row.Nome,
+                    'Email': row.Email,
+                    'Senha': row.Senha,
+                    'UrlBase': row.UrlBase,
+                    'TimeoutSegundos': row.TimeoutSegundos,
+                    'ModoDebug': bool(row.ModoDebug),
+                    'EhPrincipal': bool(row.EhPrincipal),
+                    'Ativa': bool(row.Ativa),
+                    'DataCriacao': row.DataCriacao.isoformat() if row.DataCriacao else None,
+                    'DataAtualizacao': row.DataAtualizacao.isoformat() if row.DataAtualizacao else None
+                }
+            return None
+    
+    def get_principal(self) -> Optional[Dict[str, Any]]:
+        """Retorna a credencial principal"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT TOP 1 Id, Nome, Email, Senha, UrlBase, TimeoutSegundos, ModoDebug,
+                       EhPrincipal, Ativa, DataCriacao, DataAtualizacao
+                FROM CredencialBBTips
+                WHERE EhPrincipal = 1 AND Ativa = 1
+                ORDER BY DataAtualizacao DESC
+            """)
+            row = cursor.fetchone()
+            
+            if row:
+                return {
+                    'Id': str(row.Id),
+                    'Nome': row.Nome,
+                    'Email': row.Email,
+                    'Senha': row.Senha,
+                    'UrlBase': row.UrlBase,
+                    'TimeoutSegundos': row.TimeoutSegundos,
+                    'ModoDebug': bool(row.ModoDebug),
+                    'EhPrincipal': bool(row.EhPrincipal),
+                    'Ativa': bool(row.Ativa),
+                    'DataCriacao': row.DataCriacao.isoformat() if row.DataCriacao else None,
+                    'DataAtualizacao': row.DataAtualizacao.isoformat() if row.DataAtualizacao else None
+                }
+            return None
+    
+    def create(self, credencial: Dict[str, Any]) -> str:
+        """Cria uma nova credencial"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            # Se for definida como principal, remove flag das outras
+            if credencial.get('EhPrincipal', False):
+                cursor.execute("UPDATE CredencialBBTips SET EhPrincipal = 0 WHERE EhPrincipal = 1")
+            
+            cursor.execute("""
+                INSERT INTO CredencialBBTips (Nome, Email, Senha, UrlBase, TimeoutSegundos, ModoDebug, EhPrincipal, Ativa)
+                OUTPUT INSERTED.Id
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                credencial['Nome'],
+                credencial['Email'],
+                credencial.get('Senha'),
+                credencial.get('UrlBase', 'https://app.bbtips.com.br'),
+                credencial.get('TimeoutSegundos', 30),
+                credencial.get('ModoDebug', False),
+                credencial.get('EhPrincipal', False),
+                credencial.get('Ativa', True)
+            ))
+            credencial_id = cursor.fetchone()[0]
+            conn.commit()
+            return str(credencial_id)
+    
+    def update(self, credencial_id: str, credencial: Dict[str, Any]) -> bool:
+        """Atualiza uma credencial"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            # Se for definida como principal, remove flag das outras
+            if credencial.get('EhPrincipal', False):
+                cursor.execute("UPDATE CredencialBBTips SET EhPrincipal = 0 WHERE EhPrincipal = 1")
+            
+            cursor.execute("""
+                UPDATE CredencialBBTips
+                SET Nome = ?, Email = ?, Senha = ?, UrlBase = ?, TimeoutSegundos = ?,
+                    ModoDebug = ?, EhPrincipal = ?, Ativa = ?, DataAtualizacao = GETDATE()
+                WHERE Id = ?
+            """, (
+                credencial['Nome'],
+                credencial['Email'],
+                credencial.get('Senha'),
+                credencial.get('UrlBase', 'https://app.bbtips.com.br'),
+                credencial.get('TimeoutSegundos', 30),
+                credencial.get('ModoDebug', False),
+                credencial.get('EhPrincipal', False),
+                credencial.get('Ativa', True),
+                credencial_id
+            ))
+            conn.commit()
+            return cursor.rowcount > 0
+    
+    def delete(self, credencial_id: str) -> bool:
+        """Exclui uma credencial"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            # Verifica se é a única credencial
+            cursor.execute("SELECT COUNT(*) FROM CredencialBBTips")
+            if cursor.fetchone()[0] <= 1:
+                return False
+            
+            # Se for principal, define outra como principal
+            cursor.execute("SELECT EhPrincipal FROM CredencialBBTips WHERE Id = ?", (credencial_id,))
+            row = cursor.fetchone()
+            if row and row[0]:
+                cursor.execute("UPDATE CredencialBBTips SET EhPrincipal = 1 WHERE Id != ? AND Ativa = 1", (credencial_id,))
+            
+            cursor.execute("DELETE FROM CredencialBBTips WHERE Id = ?", (credencial_id,))
+            conn.commit()
+            return cursor.rowcount > 0
+    
+    def set_principal(self, credencial_id: str) -> bool:
+        """Define uma credencial como principal"""
+        with self.conn.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            cursor.execute("UPDATE CredencialBBTips SET EhPrincipal = 0 WHERE EhPrincipal = 1")
+            cursor.execute("UPDATE CredencialBBTips SET EhPrincipal = 1 WHERE Id = ?", (credencial_id,))
+            cursor.execute("UPDATE ConfiguracaoGeral SET CredencialBBTipsId = ?, DataAtualizacao = GETDATE()", (credencial_id,))
+            
+            conn.commit()
+            return cursor.rowcount > 0
+
+
 class BancaRepository:
     """Repositório para operações com Bancas"""
     
@@ -82,7 +263,7 @@ class BancaRepository:
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT Id, Nome, SaldoInicial, SaldoAtual, StopLoss, StopGain,
-                       StakeBase, Estrategia, Status, Mercado, DataCriacao,
+                       StakeBase, StakePercent, Estrategia, Status, Mercado, DataCriacao,
                        DataUltimaOperacao, Multiplicador, MaxGales
                 FROM Banca
                 ORDER BY DataCriacao DESC
@@ -99,6 +280,7 @@ class BancaRepository:
                     'StopLoss': float(row.StopLoss),
                     'StopGain': float(row.StopGain),
                     'StakeBase': float(row.StakeBase),
+                    'StakePercent': float(row.StakePercent) if row.StakePercent else None,
                     'Estrategia': row.Estrategia,
                     'Status': row.Status,
                     'Mercado': row.Mercado,
@@ -115,7 +297,7 @@ class BancaRepository:
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT Id, Nome, SaldoInicial, SaldoAtual, StopLoss, StopGain,
-                       StakeBase, Estrategia, Status, Mercado, DataCriacao,
+                       StakeBase, StakePercent, Estrategia, Status, Mercado, DataCriacao,
                        DataUltimaOperacao, Multiplicador, MaxGales
                 FROM Banca
                 WHERE Id = ?
@@ -131,6 +313,7 @@ class BancaRepository:
                     'StopLoss': float(row.StopLoss),
                     'StopGain': float(row.StopGain),
                     'StakeBase': float(row.StakeBase),
+                    'StakePercent': float(row.StakePercent) if row.StakePercent else None,
                     'Estrategia': row.Estrategia,
                     'Status': row.Status,
                     'Mercado': row.Mercado,
@@ -147,9 +330,9 @@ class BancaRepository:
             cursor = conn.cursor()
             cursor.execute("""
                 INSERT INTO Banca (Nome, SaldoInicial, SaldoAtual, StopLoss, StopGain,
-                                  StakeBase, Estrategia, Status, Mercado, Multiplicador, MaxGales)
+                                  StakeBase, StakePercent, Estrategia, Status, Mercado, Multiplicador, MaxGales)
                 OUTPUT INSERTED.Id
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 banca['Nome'],
                 banca['SaldoInicial'],
@@ -157,7 +340,8 @@ class BancaRepository:
                 banca['StopLoss'],
                 banca['StopGain'],
                 banca['StakeBase'],
-                banca['Estrategia'],
+                banca.get('StakePercent', 2.0),
+                banca.get('Estrategia', 2),
                 banca.get('Status', 1),
                 banca['Mercado'],
                 banca.get('Multiplicador', 2.0),
@@ -174,7 +358,7 @@ class BancaRepository:
             cursor.execute("""
                 UPDATE Banca
                 SET Nome = ?, SaldoInicial = ?, SaldoAtual = ?, StopLoss = ?,
-                    StopGain = ?, StakeBase = ?, Estrategia = ?, Status = ?,
+                    StopGain = ?, StakeBase = ?, StakePercent = ?, Estrategia = ?, Status = ?,
                     Mercado = ?, Multiplicador = ?, MaxGales = ?
                 WHERE Id = ?
             """, (
@@ -184,11 +368,12 @@ class BancaRepository:
                 banca['StopLoss'],
                 banca['StopGain'],
                 banca['StakeBase'],
-                banca['Estrategia'],
-                banca['Status'],
+                banca.get('StakePercent', 2.0),
+                banca.get('Estrategia', 2),
+                banca.get('Status', 1),
                 banca['Mercado'],
-                banca['Multiplicador'],
-                banca['MaxGales'],
+                banca.get('Multiplicador', 2.0),
+                banca.get('MaxGales', 3),
                 banca_id
             ))
             conn.commit()
@@ -298,61 +483,14 @@ class ConfiguracaoRepository:
     def __init__(self, connection: SQLServerConnection):
         self.conn = connection
     
-    def get_bbtips_config(self) -> Optional[Dict[str, Any]]:
-        """Retorna as configurações do BB Tips"""
-        with self.conn.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT TOP 1 Id, Email, Senha, UrlBase, LembrarCredenciais, 
-                       AutoLogin, TimeoutSegundos, ModoDebug, DataCriacao, DataAtualizacao
-                FROM ConfiguracaoBBTips
-                ORDER BY Id DESC
-            """)
-            row = cursor.fetchone()
-            
-            if row:
-                return {
-                    'Id': row.Id,
-                    'Email': row.Email,
-                    'Senha': row.Senha,
-                    'UrlBase': row.UrlBase,
-                    'LembrarCredenciais': bool(row.LembrarCredenciais),
-                    'AutoLogin': bool(row.AutoLogin),
-                    'TimeoutSegundos': row.TimeoutSegundos,
-                    'ModoDebug': bool(row.ModoDebug),
-                    'DataCriacao': row.DataCriacao.isoformat() if row.DataCriacao else None,
-                    'DataAtualizacao': row.DataAtualizacao.isoformat() if row.DataAtualizacao else None
-                }
-            return None
-    
-    def update_bbtips_config(self, config: Dict[str, Any]) -> bool:
-        """Atualiza as configurações do BB Tips"""
-        with self.conn.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                UPDATE ConfiguracaoBBTips
-                SET Email = ?, Senha = ?, UrlBase = ?, LembrarCredenciais = ?,
-                    AutoLogin = ?, TimeoutSegundos = ?, ModoDebug = ?, DataAtualizacao = GETDATE()
-                WHERE Id = (SELECT TOP 1 Id FROM ConfiguracaoBBTips ORDER BY Id DESC)
-            """, (
-                config.get('Email'),
-                config.get('Senha'),
-                config.get('UrlBase', 'https://app.bbtips.com.br'),
-                config.get('LembrarCredenciais', False),
-                config.get('AutoLogin', False),
-                config.get('TimeoutSegundos', 30),
-                config.get('ModoDebug', False)
-            ))
-            conn.commit()
-            return cursor.rowcount > 0
-    
     def get_geral_config(self) -> Optional[Dict[str, Any]]:
         """Retorna as configurações gerais"""
         with self.conn.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT TOP 1 Id, NotificacoesAtivas, SomAlerta, IntervaloAtualizacao,
-                       TemaAplicacao, IniciarComWindows, CaminhoBancoDados, DataCriacao, DataAtualizacao
+                       TemaAplicacao, IniciarComWindows, CaminhoBancoDados, CredencialBBTipsId,
+                       DataCriacao, DataAtualizacao
                 FROM ConfiguracaoGeral
                 ORDER BY Id DESC
             """)
@@ -367,6 +505,7 @@ class ConfiguracaoRepository:
                     'TemaAplicacao': row.TemaAplicacao,
                     'IniciarComWindows': bool(row.IniciarComWindows),
                     'CaminhoBancoDados': row.CaminhoBancoDados,
+                    'CredencialBBTipsId': str(row.CredencialBBTipsId) if row.CredencialBBTipsId else None,
                     'DataCriacao': row.DataCriacao.isoformat() if row.DataCriacao else None,
                     'DataAtualizacao': row.DataAtualizacao.isoformat() if row.DataAtualizacao else None
                 }
@@ -380,7 +519,7 @@ class ConfiguracaoRepository:
                 UPDATE ConfiguracaoGeral
                 SET NotificacoesAtivas = ?, SomAlerta = ?, IntervaloAtualizacao = ?,
                     TemaAplicacao = ?, IniciarComWindows = ?, CaminhoBancoDados = ?, 
-                    DataAtualizacao = GETDATE()
+                    CredencialBBTipsId = ?, DataAtualizacao = GETDATE()
                 WHERE Id = (SELECT TOP 1 Id FROM ConfiguracaoGeral ORDER BY Id DESC)
             """, (
                 config.get('NotificacoesAtivas', True),
@@ -388,7 +527,8 @@ class ConfiguracaoRepository:
                 config.get('IntervaloAtualizacao', 5),
                 config.get('TemaAplicacao', 'Dark'),
                 config.get('IniciarComWindows', False),
-                config.get('CaminhoBancoDados')
+                config.get('CaminhoBancoDados'),
+                config.get('CredencialBBTipsId')
             ))
             conn.commit()
             return cursor.rowcount > 0
