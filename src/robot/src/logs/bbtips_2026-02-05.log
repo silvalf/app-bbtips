@@ -1,0 +1,266 @@
+[2026-02-05T22:51:02.879Z] [INFO   ] [PASSO 1] ========================================
+[2026-02-05T22:51:02.879Z] [INFO   ] [PASSO 2] INICIANDO BB TIPS ROBOT
+[2026-02-05T22:51:02.880Z] [INFO   ] [PASSO 3] ========================================
+[2026-02-05T22:51:02.880Z] [INFO   ] [PASSO 4] URL Base: https://app.bbtips.com.br
+[2026-02-05T22:51:02.881Z] [INFO   ] [PASSO 5] Email: ****@***.***
+[2026-02-05T22:51:02.881Z] [INFO   ] [PASSO 6] Inicializando browser...
+[2026-02-05T22:51:03.954Z] [SUCCESS] [PASSO 7] Browser iniciado com sucesso
+[2026-02-05T22:51:04.139Z] [DEBUG  ] [PASSO 8] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\7_01_browser_iniciado.png
+[2026-02-05T22:51:04.140Z] [INFO   ] [PASSO 9] ---------------------------------------
+[2026-02-05T22:51:04.140Z] [INFO   ] [PASSO 10] INICIANDO LOGIN
+[2026-02-05T22:51:04.141Z] [INFO   ] [PASSO 11] ---------------------------------------
+[2026-02-05T22:51:04.141Z] [INFO   ] [PASSO 12] Navegando para: https://app.bbtips.com.br/login
+[2026-02-05T22:51:06.492Z] [DEBUG  ] [PASSO 13] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\12_02_pagina_login.png
+[2026-02-05T22:51:09.498Z] [DEBUG  ] [PASSO 14] Título da página: BB Tips
+[2026-02-05T22:51:09.499Z] [INFO   ] [PASSO 15] Procurando campo de email...
+[2026-02-05T22:51:09.513Z] [SUCCESS] [PASSO 16] Campo de email encontrado
+[2026-02-05T22:51:09.644Z] [INFO   ] [PASSO 17] Email preenchido
+[2026-02-05T22:51:09.644Z] [INFO   ] [PASSO 18] Procurando campo de senha...
+[2026-02-05T22:51:09.649Z] [SUCCESS] [PASSO 19] Campo de senha encontrado
+[2026-02-05T22:51:09.693Z] [INFO   ] [PASSO 20] Senha preenchida
+[2026-02-05T22:51:09.694Z] [INFO   ] [PASSO 21] Procurando botão de login...
+[2026-02-05T22:51:09.699Z] [SUCCESS] [PASSO 22] Botão de login encontrado: "Entrar"
+[2026-02-05T22:51:09.721Z] [INFO   ] [PASSO 23] Clicou no botão de login, aguardando...
+[2026-02-05T22:51:14.896Z] [DEBUG  ] [PASSO 24] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\23_03_apos_login.png
+[2026-02-05T22:51:14.897Z] [INFO   ] [PASSO 25] URL atual: https://app.bbtips.com.br/inicio
+[2026-02-05T22:51:14.897Z] [SUCCESS] [PASSO 26] Login realizado com sucesso!
+[2026-02-05T22:51:14.898Z] [INFO   ] [PASSO 27] URL após login: https://app.bbtips.com.br/inicio
+[2026-02-05T22:51:14.899Z] [INFO   ] [PASSO 28] ---------------------------------------
+[2026-02-05T22:51:14.899Z] [INFO   ] [PASSO 29] EXECUTANDO BUSCADOR DE PADRÕES
+[2026-02-05T22:51:14.900Z] [INFO   ] [PASSO 30] ---------------------------------------
+[2026-02-05T22:51:14.900Z] [INFO   ] [PASSO 31] Parâmetros: {"maximoPulos":80,"percentualInicial":94,"totalRegistros":3,"stakeInicial":10,"multiplicador":3}
+[2026-02-05T22:51:14.900Z] [INFO   ] [PASSO 32] Navegando para: https://app.bbtips.com.br/bots/novo
+[2026-02-05T22:51:15.086Z] [BROWSER-ERROR] [PASSO 33] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-NLOEEFVE.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.087Z] [BROWSER-ERROR] [PASSO 34] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-BW25BPPI.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.088Z] [BROWSER-ERROR] [PASSO 35] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-OXGSOEBO.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.089Z] [BROWSER-ERROR] [PASSO 36] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-5XLIZX43.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.090Z] [BROWSER-ERROR] [PASSO 37] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-OX6J67RR.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.091Z] [BROWSER-ERROR] [PASSO 38] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-BJ7QMU6E.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.091Z] [BROWSER-ERROR] [PASSO 39] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-GY2IF7I7.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.092Z] [BROWSER-ERROR] [PASSO 40] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-LMLWXF2W.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.092Z] [BROWSER-ERROR] [PASSO 41] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-6KBEOSGV.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.093Z] [BROWSER-ERROR] [PASSO 42] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-NLA7K5PL.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.094Z] [BROWSER-ERROR] [PASSO 43] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/polyfills-EONH2QZO.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.095Z] [BROWSER-ERROR] [PASSO 44] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/scripts-67OFWAMY.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.095Z] [BROWSER-ERROR] [PASSO 45] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/main-KQK37MUR.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.096Z] [BROWSER-ERROR] [PASSO 46] Console Error: [Report Only] Refused to load the script 'https://cdn.jsdelivr.net/npm/hls.js@latest' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.097Z] [BROWSER-ERROR] [PASSO 47] Console Error: [Report Only] Refused to load the script 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.105Z] [BROWSER-ERROR] [PASSO 48] Console Error: [Report Only] Refused to execute inline event handler because it violates the following Content Security Policy directive: "script-src 'none'". Either the 'unsafe-inline' keyword, a hash ('sha256-...'), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present.
+
+[2026-02-05T22:51:15.107Z] [BROWSER-ERROR] [PASSO 49] Console Error: [Report Only] Refused to load the script 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.107Z] [BROWSER-ERROR] [PASSO 50] Console Error: [Report Only] Refused to load the script 'https://cdnjs.cloudflare.com/ajax/libs/formatter.js/0.1.5/formatter.min.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.109Z] [BROWSER-ERROR] [PASSO 51] Console Error: [Report Only] Refused to load the script 'https://cdn.jsdelivr.net/npm/sweetalert2@11' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.110Z] [BROWSER-ERROR] [PASSO 52] Console Error: [Report Only] Refused to load the script 'https://sdk.mercadopago.com/js/v2' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.111Z] [BROWSER-ERROR] [PASSO 53] Console Error: [Report Only] Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'none'". Either the 'unsafe-inline' keyword, a hash ('sha256-xFs3wFDMsuI2n0lKyMq9cctXibydXlGu6UBCeVVyGTg='), or a nonce ('nonce-...') is required to enable inline execution.
+
+[2026-02-05T22:51:15.112Z] [BROWSER-ERROR] [PASSO 54] Console Error: [Report Only] Refused to load the script 'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.291Z] [BROWSER-ERROR] [PASSO 55] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-6WURUOVO.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.293Z] [BROWSER-ERROR] [PASSO 56] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-WWX6BADO.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.331Z] [BROWSER-ERROR] [PASSO 57] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-6LOLENSM.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.350Z] [BROWSER-ERROR] [PASSO 58] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-RG2B4NCN.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.351Z] [BROWSER-ERROR] [PASSO 59] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-TLWIAUDU.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.352Z] [BROWSER-ERROR] [PASSO 60] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-EJYUQN43.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.353Z] [BROWSER-ERROR] [PASSO 61] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-C4R4M7O5.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.354Z] [BROWSER-ERROR] [PASSO 62] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-A5IICILA.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.355Z] [BROWSER-ERROR] [PASSO 63] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-YQWLIOPD.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.357Z] [BROWSER-ERROR] [PASSO 64] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-G2AFNGUO.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.358Z] [BROWSER-ERROR] [PASSO 65] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-CWIPMKSP.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.359Z] [BROWSER-ERROR] [PASSO 66] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-ZNGJPW4U.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.359Z] [BROWSER-ERROR] [PASSO 67] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-N7PV4LCN.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.360Z] [BROWSER-ERROR] [PASSO 68] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-FAAXEELX.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.361Z] [BROWSER-ERROR] [PASSO 69] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-LQXDE5SR.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.397Z] [BROWSER-ERROR] [PASSO 70] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-UP54TWHV.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.428Z] [BROWSER-ERROR] [PASSO 71] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-M3KKHCQB.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.430Z] [BROWSER-ERROR] [PASSO 72] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-F4XPXUFC.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.431Z] [BROWSER-ERROR] [PASSO 73] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-ER62NFNX.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.431Z] [BROWSER-ERROR] [PASSO 74] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-OX67KVXP.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:15.432Z] [BROWSER-ERROR] [PASSO 75] Console Error: [Report Only] Refused to load the script 'https://app.bbtips.com.br/chunk-OLWDPAXQ.js' because it violates the following Content Security Policy directive: "script-src 'none'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+[2026-02-05T22:51:19.745Z] [DEBUG  ] [PASSO 76] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\75_04_pagina_bots.png
+[2026-02-05T22:51:19.756Z] [DEBUG  ] [PASSO 77] Conteúdo da página: 23/02/2026
+ Bet365 
+ Betano 
+ Kiron
+ SportingBet
+ Aviator 
+ Blaze 
+ Roletas
+ Luiz Silva 
+Criar Novo Robô
+Layout Antigo
+Público
+Selecione a Liga que deseja atuar
+TodasCopaEuroSuperPremier
+Nome
+Chat
+×[B...
+[2026-02-05T22:51:19.756Z] [INFO   ] [PASSO 78] Procurando botão do Buscador...
+[2026-02-05T22:51:19.765Z] [SUCCESS] [PASSO 79] Botão do Buscador encontrado
+[2026-02-05T22:51:21.970Z] [DEBUG  ] [PASSO 80] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\79_05_modal_buscador.png
+[2026-02-05T22:51:21.971Z] [INFO   ] [PASSO 81] Preenchendo parâmetros...
+[2026-02-05T22:51:21.972Z] [INFO   ] [PASSO 82] ---------------------------------------
+[2026-02-05T22:51:21.972Z] [INFO   ] [PASSO 83] PREECHENDO PARÂMETROS
+[2026-02-05T22:51:21.972Z] [INFO   ] [PASSO 84] ---------------------------------------
+[2026-02-05T22:51:21.973Z] [INFO   ] [PASSO 85] Configurando Máximo Pulos...
+[2026-02-05T22:51:21.976Z] [WARN   ] [PASSO 86] Campo Máximo Pulos não encontrado
+[2026-02-05T22:51:21.977Z] [INFO   ] [PASSO 87] Configurando Percentual Inicial...
+[2026-02-05T22:51:22.020Z] [SUCCESS] [PASSO 88] Percentual Inicial: 94
+[2026-02-05T22:51:22.021Z] [INFO   ] [PASSO 89] Configurando Total Registros...
+[2026-02-05T22:51:22.025Z] [WARN   ] [PASSO 90] Campo Registros não encontrado
+[2026-02-05T22:51:22.211Z] [DEBUG  ] [PASSO 91] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\90_parametros_preenchidos.png
+[2026-02-05T22:51:22.211Z] [INFO   ] [PASSO 92] Parâmetros preenchidos com sucesso
+[2026-02-05T22:51:22.212Z] [INFO   ] [PASSO 93] Procurando botão Buscar...
+[2026-02-05T22:51:22.221Z] [SUCCESS] [PASSO 94] Botão Buscar encontrado: "Buscar"
+[2026-02-05T22:51:22.248Z] [INFO   ] [PASSO 95] Clicou em Buscar, aguardando resultados...
+[2026-02-05T22:51:27.473Z] [DEBUG  ] [PASSO 96] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\95_06_resultados_busca.png
+[2026-02-05T22:51:27.474Z] [INFO   ] [PASSO 97] Procurando tabela de resultados...
+[2026-02-05T22:51:27.481Z] [SUCCESS] [PASSO 98] Primeira linha da tabela encontrada
+[2026-02-05T22:51:27.515Z] [INFO   ] [PASSO 99] Clicou na linha, aguardando alerta...
+[2026-02-05T22:51:29.527Z] [SUCCESS] [PASSO 100] Botão "Sim" encontrado, clicando...
+[2026-02-05T22:51:29.908Z] [DEBUG  ] [PASSO 101] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\100_07_linha_selecionada.png
+[2026-02-05T22:51:30.912Z] [INFO   ] [PASSO 102] Procurando Opções Avançadas...
+[2026-02-05T22:51:30.917Z] [WARN   ] [PASSO 103] Opções Avançadas não encontrado
+[2026-02-05T22:51:30.921Z] [INFO   ] [PASSO 104] Preenchendo Stake e Multiplicador...
+[2026-02-05T22:51:30.946Z] [INFO   ] [PASSO 105] Encontrados 22 inputs na página
+[2026-02-05T22:51:30.962Z] [INFO   ] [PASSO 106] Stake preenchido: 10
+[2026-02-05T22:51:30.978Z] [INFO   ] [PASSO 107] Multiplicador preenchido: 3
+[2026-02-05T22:51:31.192Z] [DEBUG  ] [PASSO 108] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\107_09_stake_multiplicador.png
+[2026-02-05T22:51:31.197Z] [SUCCESS] [PASSO 109] ========================================
+[2026-02-05T22:51:31.198Z] [SUCCESS] [PASSO 110] BUSCADOR DE PADRÕES CONCLUÍDO COM SUCESSO!
+[2026-02-05T22:51:31.198Z] [SUCCESS] [PASSO 111] ========================================
+[2026-02-05T22:51:31.421Z] [DEBUG  ] [PASSO 112] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\111_99_fechando.png
+[2026-02-05T22:51:31.735Z] [INFO   ] [PASSO 113] Browser fechado
+[2026-02-05T22:51:31.736Z] [INFO   ] [PASSO 114] ========================================
+[2026-02-05T22:51:31.737Z] [INFO   ] [PASSO 115] ROBÔ FINALIZADO
+[2026-02-05T22:51:31.737Z] [INFO   ] [PASSO 116] Total de passos: 115
+[2026-02-05T22:51:31.737Z] [INFO   ] [PASSO 117] ========================================
+[2026-02-05T22:57:06.029Z] [INFO   ] [PASSO 1] ========================================
+[2026-02-05T22:57:06.030Z] [INFO   ] [PASSO 2] INICIANDO BB TIPS ROBOT
+[2026-02-05T22:57:06.030Z] [INFO   ] [PASSO 3] ========================================
+[2026-02-05T22:57:06.031Z] [INFO   ] [PASSO 4] URL Base: https://app.bbtips.com.br
+[2026-02-05T22:57:06.031Z] [INFO   ] [PASSO 5] Email: ****@***.***
+[2026-02-05T22:57:06.031Z] [INFO   ] [PASSO 6] Inicializando browser...
+[2026-02-05T22:57:09.386Z] [SUCCESS] [PASSO 7] Browser iniciado com sucesso
+[2026-02-05T22:57:09.507Z] [DEBUG  ] [PASSO 8] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\7_01_browser_iniciado.png
+[2026-02-05T22:57:09.508Z] [INFO   ] [PASSO 9] ---------------------------------------
+[2026-02-05T22:57:09.509Z] [INFO   ] [PASSO 10] INICIANDO LOGIN
+[2026-02-05T22:57:09.509Z] [INFO   ] [PASSO 11] ---------------------------------------
+[2026-02-05T22:57:09.510Z] [INFO   ] [PASSO 12] Navegando para: https://app.bbtips.com.br/login
+[2026-02-05T22:57:11.788Z] [DEBUG  ] [PASSO 13] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\12_02_pagina_login.png
+[2026-02-05T22:57:14.802Z] [DEBUG  ] [PASSO 14] Título da página: BB Tips
+[2026-02-05T22:57:14.803Z] [INFO   ] [PASSO 15] Procurando campo de email...
+[2026-02-05T22:57:14.818Z] [SUCCESS] [PASSO 16] Campo de email encontrado
+[2026-02-05T22:57:14.938Z] [INFO   ] [PASSO 17] Email preenchido
+[2026-02-05T22:57:14.939Z] [INFO   ] [PASSO 18] Procurando campo de senha...
+[2026-02-05T22:57:14.943Z] [SUCCESS] [PASSO 19] Campo de senha encontrado
+[2026-02-05T22:57:14.988Z] [INFO   ] [PASSO 20] Senha preenchida
+[2026-02-05T22:57:14.989Z] [INFO   ] [PASSO 21] Procurando botão de login...
+[2026-02-05T22:57:14.994Z] [SUCCESS] [PASSO 22] Botão de login encontrado: "Entrar"
+[2026-02-05T22:57:15.022Z] [INFO   ] [PASSO 23] Clicou no botão de login, aguardando...
+[2026-02-05T22:57:20.732Z] [DEBUG  ] [PASSO 24] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\23_03_apos_login.png
+[2026-02-05T22:57:20.733Z] [INFO   ] [PASSO 25] URL atual: https://app.bbtips.com.br/inicio
+[2026-02-05T22:57:20.734Z] [SUCCESS] [PASSO 26] Login realizado com sucesso!
+[2026-02-05T22:57:20.734Z] [INFO   ] [PASSO 27] URL após login: https://app.bbtips.com.br/inicio
+[2026-02-05T22:57:20.735Z] [INFO   ] [PASSO 28] ---------------------------------------
+[2026-02-05T22:57:20.735Z] [INFO   ] [PASSO 29] EXECUTANDO BUSCADOR DE PADRÕES
+[2026-02-05T22:57:20.736Z] [INFO   ] [PASSO 30] ---------------------------------------
+[2026-02-05T22:57:20.736Z] [INFO   ] [PASSO 31] Parâmetros: {"maximoPulos":80,"percentualInicial":94,"totalRegistros":3,"stakeInicial":10,"multiplicador":3}
+[2026-02-05T22:57:20.737Z] [INFO   ] [PASSO 32] Navegando para: https://app.bbtips.com.br/bots/novo
+[2026-02-05T22:57:26.097Z] [DEBUG  ] [PASSO 33] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\32_04_pagina_bots.png
+[2026-02-05T22:57:26.109Z] [DEBUG  ] [PASSO 34] Conteúdo da página: 23/02/2026
+ Bet365 
+ Betano 
+ Kiron
+ SportingBet
+ Aviator 
+ Blaze 
+ Roletas
+ Luiz Silva 
+Criar Novo Robô
+Layout Antigo
+Público
+Selecione a Liga que deseja atuar
+TodasCopaEuroSuperPremier
+Nome
+Chat
+×[B...
+[2026-02-05T22:57:26.110Z] [INFO   ] [PASSO 35] Procurando botão do Buscador...
+[2026-02-05T22:57:26.120Z] [SUCCESS] [PASSO 36] Botão do Buscador encontrado
+[2026-02-05T22:57:28.356Z] [DEBUG  ] [PASSO 37] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\36_05_modal_buscador.png
+[2026-02-05T22:57:28.357Z] [INFO   ] [PASSO 38] Preenchendo parâmetros...
+[2026-02-05T22:57:28.358Z] [INFO   ] [PASSO 39] ---------------------------------------
+[2026-02-05T22:57:28.358Z] [INFO   ] [PASSO 40] PREECHENDO PARÂMETROS
+[2026-02-05T22:57:28.358Z] [INFO   ] [PASSO 41] ---------------------------------------
+[2026-02-05T22:57:28.359Z] [INFO   ] [PASSO 42] Configurando Máximo Pulos...
+[2026-02-05T22:57:28.362Z] [WARN   ] [PASSO 43] Campo Máximo Pulos não encontrado
+[2026-02-05T22:57:28.363Z] [INFO   ] [PASSO 44] Configurando Percentual Inicial...
+[2026-02-05T22:57:28.411Z] [SUCCESS] [PASSO 45] Percentual Inicial: 94
+[2026-02-05T22:57:28.411Z] [INFO   ] [PASSO 46] Configurando Total Registros...
+[2026-02-05T22:57:28.414Z] [WARN   ] [PASSO 47] Campo Registros não encontrado
+[2026-02-05T22:57:28.605Z] [DEBUG  ] [PASSO 48] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\47_parametros_preenchidos.png
+[2026-02-05T22:57:28.606Z] [INFO   ] [PASSO 49] Parâmetros preenchidos com sucesso
+[2026-02-05T22:57:28.606Z] [INFO   ] [PASSO 50] Procurando botão Buscar...
+[2026-02-05T22:57:28.615Z] [SUCCESS] [PASSO 51] Botão Buscar encontrado: "Buscar"
+[2026-02-05T22:57:28.633Z] [INFO   ] [PASSO 52] Clicou em Buscar, aguardando resultados...
+[2026-02-05T22:57:33.913Z] [DEBUG  ] [PASSO 53] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\52_06_resultados_busca.png
+[2026-02-05T22:57:33.913Z] [INFO   ] [PASSO 54] Procurando tabela de resultados...
+[2026-02-05T22:57:33.922Z] [SUCCESS] [PASSO 55] Primeira linha da tabela encontrada
+[2026-02-05T22:57:33.958Z] [INFO   ] [PASSO 56] Clicou na linha, aguardando alerta...
+[2026-02-05T22:57:35.978Z] [SUCCESS] [PASSO 57] Botão "Sim" encontrado, clicando...
+[2026-02-05T22:57:36.375Z] [DEBUG  ] [PASSO 58] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\57_07_linha_selecionada.png
+[2026-02-05T22:57:37.391Z] [INFO   ] [PASSO 59] Procurando Opções Avançadas...
+[2026-02-05T22:57:37.395Z] [WARN   ] [PASSO 60] Opções Avançadas não encontrado
+[2026-02-05T22:57:37.400Z] [INFO   ] [PASSO 61] Preenchendo Stake e Multiplicador...
+[2026-02-05T22:57:37.439Z] [INFO   ] [PASSO 62] Encontrados 22 inputs na página
+[2026-02-05T22:57:37.454Z] [INFO   ] [PASSO 63] Stake preenchido: 10
+[2026-02-05T22:57:37.468Z] [INFO   ] [PASSO 64] Multiplicador preenchido: 3
+[2026-02-05T22:57:37.679Z] [DEBUG  ] [PASSO 65] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\64_09_stake_multiplicador.png
+[2026-02-05T22:57:37.685Z] [SUCCESS] [PASSO 66] ========================================
+[2026-02-05T22:57:37.685Z] [SUCCESS] [PASSO 67] BUSCADOR DE PADRÕES CONCLUÍDO COM SUCESSO!
+[2026-02-05T22:57:37.686Z] [SUCCESS] [PASSO 68] ========================================
+[2026-02-05T22:57:37.890Z] [DEBUG  ] [PASSO 69] Screenshot salvo: C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\robot\src\screenshots\68_99_fechando.png
+[2026-02-05T22:57:38.276Z] [INFO   ] [PASSO 70] Browser fechado
+[2026-02-05T22:57:38.276Z] [INFO   ] [PASSO 71] ========================================
+[2026-02-05T22:57:38.277Z] [INFO   ] [PASSO 72] ROBÔ FINALIZADO
+[2026-02-05T22:57:38.277Z] [INFO   ] [PASSO 73] Total de passos: 72
+[2026-02-05T22:57:38.278Z] [INFO   ] [PASSO 74] ========================================

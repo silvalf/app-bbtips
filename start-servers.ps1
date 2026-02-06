@@ -1,35 +1,29 @@
-# Script de inicializacao automatica para BBTips App
-# Abre duas janelas PowerShell: uma para backend, outra para frontend
-# E abre o navegador na pagina do frontend
+# Script para iniciar todos os serviços do BB Tips
+# Inclui Backend (.NET) e Frontend (Angular)
 
-$backendPath = "c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\backend"
-$frontendPath = "c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\frontend"
-
-Write-Host "BBTips App iniciado!" -ForegroundColor Green
-
-# Iniciar Backend em nova janela
-Write-Host "Iniciando Backend (FastAPI)..." -ForegroundColor Cyan
-$backendScript = "Set-Location '$backendPath'; .\.venv311\Scripts\python.exe -m pip install pyodbc --quiet; Write-Host 'Backend iniciando em http://127.0.0.1:8000' -ForegroundColor Green; .\.venv311\Scripts\python.exe -m uvicorn server:app --reload --host 127.0.0.1 --port 8000"
-Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", $backendScript
-
-# Aguardar um pouco para o backend iniciar
-Start-Sleep -Seconds 2
-
-# Iniciar Frontend em nova janela
-Write-Host "Iniciando Frontend (React)..." -ForegroundColor Cyan
-$frontendScript = "Set-Location '$frontendPath'; `$env:PATH = 'C:\Program Files\nodejs;' + `$env:PATH; Write-Host 'Frontend iniciando em http://localhost:3000' -ForegroundColor Green; npm start"
-Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", $frontendScript
-
-# Aguardar um pouco para o frontend iniciar
-Start-Sleep -Seconds 5
-
-# Abrir navegador na pagina do frontend
-Write-Host "Abrindo navegador..." -ForegroundColor Cyan
-Start-Process "http://localhost:3000"
-
+Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host "  BB Tips - Inicializando Serviços" -ForegroundColor Cyan
+Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Servidores iniciados!" -ForegroundColor Green
-Write-Host "Backend:  http://127.0.0.1:8000" -ForegroundColor Yellow
-Write-Host "Frontend: http://localhost:3000" -ForegroundColor Yellow
-Write-Host ""
-Write-Host "Dica: Verifique o status dos servidores na pagina Home" -ForegroundColor Magenta
+
+# Caminhos
+$backendPath = "$PSScriptRoot\src\api\BBTips.Api"
+$frontendPath = "$PSScriptRoot\src\web"
+
+# Verificar se o backend existe
+if (Test-Path $backendPath) {
+    Write-Host "[1/2] Iniciando Backend .NET..." -ForegroundColor Yellow
+    cd $backendPath
+    dotnet run --urls "http://localhost:5000"
+} else {
+    Write-Host "Backend não encontrado em: $backendPath" -ForegroundColor Red
+}
+
+# Verificar se o frontend existe
+if (Test-Path $frontendPath) {
+    Write-Host "[2/2] Iniciando Frontend Angular..." -ForegroundColor Yellow
+    cd $frontendPath
+    npm start
+} else {
+    Write-Host "Frontend não encontrado em: $frontendPath" -ForegroundColor Red
+}

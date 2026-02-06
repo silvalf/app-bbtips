@@ -1,3 +1,8 @@
+using BBTips.Infrastructure.Data;
+using BBTips.Domain.Interfaces;
+using BBTips.Application.Services;
+using BBTips.Domain.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
@@ -5,65 +10,38 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// CORS
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", policy => {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Database (Dapper)
+builder.Services.AddSingleton<DapperContext>();
 
 // Dependency Injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBotService, BotService>();
 builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IConfiguracaoPerfilRepository, ConfiguracaoPerfilRepository>();
+builder.Services.AddScoped<IConfiguracaoPerfilService, ConfiguracaoPerfilService>();
+builder.Services.AddScoped<ICredenciaisBotsRepository, CredenciaisBotsRepository>();
+builder.Services.AddScoped<ICredenciaisBotsService, CredenciaisBotsService>();
 
 var app = builder.Build();
 
+// Root endpoint - simple health check
+app.MapGet("/", () => Results.Json(new { message = "sucesso!" }));
+
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseCors("AllowAll");
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-// Application DbContext
-public class ApplicationDbContext : DbContext
-{
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
-
-    public DbSet<Bot> Bots { get; set; }
-    public DbSet<Log> Logs { get; set; }
-    public DbSet<User> Users { get; set; }
-}
-
-// Entities
-public class Bot
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Platform { get; set; } = string.Empty;
-    public string Game { get; set; } = string.Empty;
-    public string Status { get; set; } = "Active";
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
-}
-
-public class Log
-{
-    public int Id { get; set; }
-    public string Level { get; set; } = string.Empty;
-    public string Message { get; set; } = string.Empty;
-    public string? Details { get; set; }
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow();
-}
-
-public class User
-{
-    public int Id { get; set; }
-    public string Email { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-}

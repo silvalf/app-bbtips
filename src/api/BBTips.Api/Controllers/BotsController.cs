@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using BBTips.Domain.Interfaces;
 
 namespace BBTips.Api.Controllers;
 
@@ -50,18 +51,4 @@ public class BotsController : ControllerBase
         if (!success) return NotFound();
         return NoContent();
     }
-}
-
-// Requests
-public class CreateBotRequest
-{
-    public string Name { get; set; } = string.Empty;
-    public string Platform { get; set; } = string.Empty;
-    public string Game { get; set; } = string.Empty;
-}
-
-public class UpdateBotRequest
-{
-    public string? Name { get; set; }
-    public string? Status { get; set; }
 }

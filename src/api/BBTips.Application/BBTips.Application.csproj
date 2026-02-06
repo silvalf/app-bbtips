@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.28" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BBTips.Domain\BBTips.Domain.csproj" />
+    <ProjectReference Include="..\BBTips.Infrastructure\BBTips.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

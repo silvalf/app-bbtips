@@ -1,1 +1,6 @@
+powershell -ExecutionPolicy Bypass -File "c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\init_app.ps1"
+
+
+
+
 powershell -ExecutionPolicy Bypass -File .\start-servers.ps1

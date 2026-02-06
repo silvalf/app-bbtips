@@ -1,0 +1,16 @@
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\bin\Debug\net8.0\BBTips.Infrastructure.deps.json
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\bin\Debug\net8.0\BBTips.Infrastructure.dll
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\bin\Debug\net8.0\BBTips.Infrastructure.pdb
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\bin\Debug\net8.0\BBTips.Domain.dll
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\bin\Debug\net8.0\BBTips.Domain.pdb
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.AssemblyInfo.cs
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.sourcelink.json
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.I.83E4976B.Up2Date
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.dll
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\refint\BBTips.Infrastructure.dll
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\BBTips.Infrastructure.pdb
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Infrastructure\obj\Debug\net8.0\ref\BBTips.Infrastructure.dll
