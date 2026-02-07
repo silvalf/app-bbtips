@@ -5,7 +5,7 @@
 
 require('dotenv').config();
 
-const { BBTipsRobo } = require('./services/robotService');
+const BBTipsRobo = require('./services/robotService');
 
 const config = {
     urlBase: process.env.BB_TIPS_URL || 'https://app.bbtips.com.br',

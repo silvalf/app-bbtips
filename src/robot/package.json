@@ -1,14 +1,18 @@
 {
   "name": "bbtips-robot",
   "version": "2.0.0",
-  "description": "Robot BB Tips - Puppeteer automation",
+  "description": "Robot BB Tips - Puppeteer automation with API",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:api": "node src/api/server.js",
     "test": "node src/test-local.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "puppeteer": "^21.6.1"
+    "express": "^4.18.2",
+    "puppeteer": "^21.6.1",
+    "socket.io": "^4.7.4"
   }
 }

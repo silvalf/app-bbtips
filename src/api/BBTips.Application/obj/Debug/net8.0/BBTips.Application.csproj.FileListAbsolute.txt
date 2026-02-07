@@ -1,4 +1,4 @@
-c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\bin\Debug\net8.0\BBTips.Application.deps.json
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\bin\Debug\net8.0\BBTips.Application.deps.json
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\bin\Debug\net8.0\BBTips.Application.dll
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\bin\Debug\net8.0\BBTips.Application.pdb
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\bin\Debug\net8.0\BBTips.Domain.dll
@@ -11,8 +11,8 @@ C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.Application.AssemblyInfo.cs
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.Application.csproj.CoreCompileInputs.cache
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.Application.sourcelink.json
-c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.A.73136AD1.Up2Date
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.A.73136AD1.Up2Date
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.Application.dll
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\refint\BBTips.Application.dll
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\BBTips.Application.pdb
-c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\ref\BBTips.Application.dll
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Application\obj\Debug\net8.0\ref\BBTips.Application.dll

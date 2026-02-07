@@ -1,4 +1,4 @@
-c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\bin\Debug\net8.0\BBTips.Domain.deps.json
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\bin\Debug\net8.0\BBTips.Domain.deps.json
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\bin\Debug\net8.0\BBTips.Domain.dll
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\bin\Debug\net8.0\BBTips.Domain.pdb
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\Debug\net8.0\BBTips.Domain.GeneratedMSBuildEditorConfig.editorconfig
@@ -9,4 +9,4 @@ C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\D
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\Debug\net8.0\BBTips.Domain.dll
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\Debug\net8.0\refint\BBTips.Domain.dll
 C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\Debug\net8.0\BBTips.Domain.pdb
-c:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\Debug\net8.0\ref\BBTips.Domain.dll
+C:\Users\luizs\OneDrive\Documentos\GitHub\app-bbtips\src\api\BBTips.Domain\obj\Debug\net8.0\ref\BBTips.Domain.dll
