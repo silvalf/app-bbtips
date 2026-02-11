@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BBTips.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b506107dee5739741fd0c7f4568da821b375238a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bedc1cb6a2fb430cf90100861a08ec03c6d8d8fa")]
 [assembly: System.Reflection.AssemblyProductAttribute("BBTips.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BBTips.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

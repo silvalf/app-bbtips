@@ -49,7 +49,12 @@ app.MapGet("/health", () => Results.Ok(new { status = "OK", timestamp = DateTime
 app.MapGet("/endpoints", () => {
     var endpoints = app.Services.GetRequiredService<EndpointDataSource>().Endpoints
         .Where(e => e.DisplayName != null)
-        .Select(e => e.DisplayName);
+        .Select(e => {
+            var displayName = e.DisplayName.ToString();
+            // Extrai apenas a rota (remove o método HTTP como "GET ", "POST ", etc.)
+            var spaceIndex = displayName.IndexOf(' ');
+            return spaceIndex > 0 ? displayName.Substring(spaceIndex + 1) : displayName;
+        });
     return Results.Ok(new { 
         message = "Lista de todos os endpoints", 
         endpoints = endpoints 
@@ -66,41 +71,6 @@ app.MapGet("/check-endpoint", (string path) => {
         found = endpoints.Any(),
         endpoints = endpoints
     });
-});
-
-// Endpoint de teste global
-app.MapGet("/test-global", () => Results.Ok(new { success = true, message = "Teste global funcionando!", timestamp = DateTime.Now }));
-
-// Endpoint de teste para ResultsCards
-app.MapGet("/test-results-cards", () => Results.Ok(new { success = true, message = "ResultsCards controller ativo!", timestamp = DateTime.Now }));
-
-// Endpoint para criar a tabela ResultadosCards
-app.MapPost("/api/criar-tabela", async (DapperContext dapperContext) => {
-    try {
-        using var connection = dapperContext.CreateConnection();
-        
-        var createTableSql = @"
-        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ResultadosCards')
-        BEGIN
-            CREATE TABLE ResultadosCards (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                Titulo NVARCHAR(255),
-                Padroes NVARCHAR(50),
-                Percentual NVARCHAR(50),
-                Sg INT,
-                G1 INT,
-                G2 INT,
-                DataHoraBusca DATETIME,
-                DataCriacao DATETIME
-            )
-        END";
-        
-        await connection.ExecuteAsync(createTableSql);
-        
-        return Results.Ok(new { success = true, message = "Tabela ResultadosCards criada ou já existe!" });
-    } catch (Exception ex) {
-        return Results.BadRequest(new { success = false, error = ex.Message });
-    }
 });
 
 // Endpoint de inserção de cards - direto no Program.cs para teste
@@ -134,9 +104,10 @@ app.MapPost("/api/inserir-cards", async (HttpContext context, DapperContext dapp
                 var g2 = card.TryGetValue("g2", out var g2el) ? g2el.GetInt32() : 0;
                 var dataBuscaStr = card.TryGetValue("data_hora_busca", out var d) ? d.GetString() : null;
                 var dataHoraBusca = DateTime.TryParse(dataBuscaStr, out var dt) ? dt : DateTime.Now;
+                var liga = card.TryGetValue("liga", out var l) ? l.GetString() : null;
                 
-                var sql = @"INSERT INTO ResultadosCards (Titulo, Padroes, Percentual, Sg, G1, G2, DataHoraBusca, DataCriacao) 
-                           VALUES (@Titulo, @Padroes, @Percentual, @Sg, @G1, @G2, @DataHoraBusca, @DataCriacao)";
+                var sql = @"INSERT INTO ResultadosCards (Titulo, Padroes, Percentual, Sg, G1, G2, DataHoraBusca, Liga, DataCriacao) 
+                           VALUES (@Titulo, @Padroes, @Percentual, @Sg, @G1, @G2, @DataHoraBusca, @Liga, @DataCriacao)";
                 
                 await connection.ExecuteAsync(sql, new {
                     Titulo = titulo,
@@ -146,6 +117,7 @@ app.MapPost("/api/inserir-cards", async (HttpContext context, DapperContext dapp
                     G1 = g1,
                     G2 = g2,
                     DataHoraBusca = dataHoraBusca,
+                    Liga = liga,
                     DataCriacao = DateTime.Now
                 });
                 

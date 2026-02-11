@@ -143,7 +143,7 @@ public class ResultadosCardsController : ControllerBase
                 {
                     this.Log("INFO", $"Inserindo card: {card.Titulo}");
                     
-                    var sql = @"INSERT INTO resultados_cards (titulo, padroes, percentual, sg, g1, g2, data_hora_busca) VALUES (@titulo, @padroes, @percentual, @sg, @g1, @g2, @data_hora_busca)";
+                    var sql = @"INSERT INTO ResultadosCards (titulo, padroes, percentual, sg, g1, g2, DataHoraBusca, liga) VALUES (@titulo, @padroes, @percentual, @sg, @g1, @g2, @DataHoraBusca, @liga)";
 
                     using var command = new SqlCommand(sql, connection);
                     DateTime dataBusca = card.DataHoraBusca ?? DateTime.Now;
@@ -154,7 +154,8 @@ public class ResultadosCardsController : ControllerBase
                     command.Parameters.AddWithValue("@sg", card.Sg);
                     command.Parameters.AddWithValue("@g1", card.G1);
                     command.Parameters.AddWithValue("@g2", card.G2);
-                    command.Parameters.AddWithValue("@data_hora_busca", dataBusca);
+                    command.Parameters.AddWithValue("@DataHoraBusca", dataBusca);
+                    command.Parameters.AddWithValue("@liga", card.Liga ?? (object)DBNull.Value);
 
                     var result = await command.ExecuteNonQueryAsync();
                     this.Log("INFO", $"Card inserido. Rows: {result}");
@@ -351,6 +352,9 @@ public class CardDto
     
     [JsonPropertyName("data_hora_busca")]
     public DateTime? DataHoraBusca { get; set; }
+    
+    [JsonPropertyName("liga")]
+    public string? Liga { get; set; }
 }
 
 /// <summary>

@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
             <span class="nav-icon">💰</span>
             <span class="nav-text">Bancas</span>
           </a>
-          <a routerLink="/padroes" routerLinkActive="active" class="nav-item">
+          <a routerLink="/Bot" routerLinkActive="active" class="nav-item">
             <span class="nav-icon">📋</span>
             <span class="nav-text">Padrões</span>
           </a>

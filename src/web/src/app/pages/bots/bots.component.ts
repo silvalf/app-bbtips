@@ -13,7 +13,7 @@ interface ParametrosBusca {
 }
 
 @Component({
-  selector: 'app-padroes',
+  selector: 'app-bots',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   template: `
@@ -563,7 +563,7 @@ interface ParametrosBusca {
     }
   `]
 })
-export class PadroesComponent implements OnInit, OnDestroy {
+export class BotsComponent implements OnInit, OnDestroy {
   credenciais: Credencial[] = [];
   selectedCredencialId = '';
   logs: RobotLogEntry[] = [];

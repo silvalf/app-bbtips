@@ -74,25 +74,51 @@ Write-Host "OK" -ForegroundColor Green
 # 4. Iniciar API do Robot (Porta 3001) em janela separada
 # ============================================
 Write-Host ""
-Write-Host "[4/5] Iniciando API do Robot (porta 3001)..." -ForegroundColor Yellow
+Write-Host "[4/6] Iniciando API do Robot (porta 3001)..." -ForegroundColor Yellow
+
+# Criar pasta de logs se não existir
+$RobotLogsDir = Join-Path $RobotPath "logs"
+if (-not (Test-Path $RobotLogsDir)) {
+    New-Item -ItemType Directory -Force -Path $RobotLogsDir | Out-Null
+}
+
+# Iniciar em nova janela (sem redirecionamento para ver erros)
 $RobotApiProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "npm run start:api" -WindowStyle Normal -WorkingDirectory $RobotPath -PassThru
 Write-Host "OK (PID: $($RobotApiProcess.Id))" -ForegroundColor Green
 
-# Aguardar
+# Aguardar e verificar se a API do Robot iniciou corretamente
 Write-Host "Aguardando API do Robot iniciar..." -ForegroundColor Gray
-Start-Sleep -Seconds 5
+$RobotApiReady = $false
+$RobotApiRetries = 0
+while (-not $RobotApiReady -and $RobotApiRetries -lt 5) {
+    Start-Sleep -Seconds 5
+    $RobotApiRetries++
+    try {
+        $Response = Invoke-WebRequest -Uri "http://localhost:3001/health" -TimeoutSec 2 -ErrorAction SilentlyContinue
+        if ($Response.StatusCode -eq 200) {
+            $RobotApiReady = $true
+            Write-Host "API do Robot esta pronta!" -ForegroundColor Green
+        }
+    } catch {
+        Write-Host "Aguardando API do Robot... ($RobotApiRetries/5)" -ForegroundColor Gray
+    }
+}
+
+if (-not $RobotApiReady) {
+    Write-Host "AVISO: API do Robot nao respondeu em 60 segundos, continuando..." -ForegroundColor Yellow
+}
 
 # ============================================
 # 5. Iniciar API .NET (Porta 5000) em janela separada
 # ============================================
 Write-Host ""
-Write-Host "[5/5] Iniciando API .NET (porta 5000)..." -ForegroundColor Yellow
+Write-Host "[5/6] Iniciando API .NET (porta 5000)..." -ForegroundColor Yellow
 $ApiProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "dotnet run --urls http://localhost:5000" -WindowStyle Normal -WorkingDirectory $ApiPath -PassThru
 Write-Host "OK (PID: $($ApiProcess.Id))" -ForegroundColor Green
 
 # Aguardar
 Write-Host "Aguardando API .NET iniciar..." -ForegroundColor Gray
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 10
 
 # ============================================
 # 6. Iniciar Frontend Angular (Porta 3000) em janela separada
@@ -126,10 +152,10 @@ Write-Host "Para usar:" -ForegroundColor White
 Write-Host "   Acesse: http://localhost:3000/simulador" -ForegroundColor Green
 Write-Host "   Clique em INICIAR para rodar o robo (VISIVEL)" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Processos:" -ForegroundColor White
-Write-Host "   API Robot: $($RobotApiProcess.Id)" -ForegroundColor Gray
-Write-Host "   API .NET:  $($ApiProcess.Id)" -ForegroundColor Gray
-Write-Host "   Angular:   $($AngularProcess.Id)" -ForegroundColor Gray
+Write-Host "Servicos:" -ForegroundColor White
+Write-Host "   API Robot: http://localhost:3001 (PID: $($RobotApiProcess.Id))" -ForegroundColor Gray
+Write-Host "   API .NET:  http://localhost:5000 (PID: $($ApiProcess.Id))" -ForegroundColor Gray
+Write-Host "   Angular:   http://localhost:3000 (PID: $($AngularProcess.Id))" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Para parar: Get-Process -Id $($RobotApiProcess.Id), $($ApiProcess.Id), $($AngularProcess.Id) | Stop-Process" -ForegroundColor Yellow
 Write-Host ""

@@ -14,7 +14,7 @@ class BBTipsRobo {
         this.isRunning = false;
         this.logs = [];
         this.stepCount = 0;
-        this.dadosCards = []; // Armazenar dados dos cards extraídos
+        this.dadosCards = [];
         
         // URL da API para inserir dados no banco (localhost)
         this.apiUrl = process.env.API_URL || 'http://localhost:5000';
@@ -205,39 +205,29 @@ class BBTipsRobo {
         return true;
     }
     
-    async executarBuscadorPadroes(config) {
+    async executarBuscadorTodasTabelas(config) {
         this.addLog('INFO', '---------------------------------------');
-        this.addLog('INFO', 'EXECUTANDO BUSCADOR DE PADRÕES');
+        this.addLog('INFO', 'EXECUTANDO BUSCADOR DE PADRÕES - TODAS AS TABELAS');
         this.addLog('INFO', '---------------------------------------');
         this.addLog('INFO', `URL Base do robô: ${this.config.urlBase}`);
         
+        const todosOsCards = [];
+        let totalTabelasProcessadas = 0;
+        
+        const botsUrl = `${this.config.urlBase}/bots/novo`;
+        
         try {
-            // =========================================
+            // ═══════════════════════════════════════════════════════════
             // PASSO 1: Navegar para página de bots
-            // =========================================
-            const botsUrl = `${this.config.urlBase}/bots/novo`;
+            // ═══════════════════════════════════════════════════════════
             this.addLog('INFO', `Navegando para: ${botsUrl}`);
-            
-            // Debug: verificar URL atual antes de navegar
-            const currentUrlBefore = await this.page.url();
-            this.addLog('DEBUG', `URL atual antes de navegar: ${currentUrlBefore}`);
-            
             await this.page.goto(botsUrl, { waitUntil: 'networkidle0', timeout: 60000 });
-            
-            // Debug: verificar URL depois de navegar
-            const currentUrlAfter = await this.page.url();
-            this.addLog('DEBUG', `URL após navegar: ${currentUrlAfter}`);
-            
             await this.sleep(3000);
             await this.takeScreenshot('01_pagina_bots');
             
-            // Verificar elementos da página
-            const bodyContent = await this.page.$eval('body', el => el.innerText.substring(0, 200));
-            this.addLog('DEBUG', `Conteúdo da página: ${bodyContent}...`);
-            
-            // =========================================
+            // ═══════════════════════════════════════════════════════════
             // PASSO 2: Clicar em "Buscar Padrões"
-            // =========================================
+            // ═══════════════════════════════════════════════════════════
             this.addLog('INFO', 'Procurando botão Buscar Padrões...');
             const buscarPadroesSelector = 'body > app-root > div > app-robos-novo > div > div > div:nth-child(5) > div > div.col-md-6.px-3 > div.col-md-12.pt-1 > button.btn.btn-success.ms-2';
             const buscarPadroesBtn = await this.page.$(buscarPadroesSelector);
@@ -253,26 +243,18 @@ class BBTipsRobo {
                 return { sucesso: false, erro: 'Botão Buscar Padrões não encontrado' };
             }
             
-            // =========================================
-            // PASSO 3: No campo "Máximo Pulos" setar 80
-            // =========================================
-            this.addLog('INFO', 'Procurando campo Máximo Pulos...');
-            
-            // Tentar encontrar o ng-select de Pulos
+            // ═══════════════════════════════════════════════════════════
+            // PASSO 3: Configurar parâmetros (Máximo Pulos = 80)
+            // ═══════════════════════════════════════════════════════════
+            this.addLog('INFO', 'Configurando Máximo Pulos...');
             const pulosNgSelect = await this.page.$('ng-select[placeholder*="Pulos"]');
-            
             if (pulosNgSelect) {
-                this.addLog('SUCCESS', 'Campo Máximo Pulos encontrado');
                 await pulosNgSelect.click();
                 await this.sleep(500);
-                
-                // Procurar opção com valor 80
                 const opcoes = await this.page.$('ng-dropdown-panel .ng-option');
                 let pulosSetado = false;
-                
                 for (const opcao of opcoes) {
                     const texto = await opcao.evaluate(el => el.textContent.trim());
-                    this.addLog('INFO', `Opção encontrada: "${texto}"`);
                     if (texto === '80') {
                         await opcao.click();
                         this.addLog('SUCCESS', 'Máximo Pulos configurado: 80');
@@ -280,39 +262,17 @@ class BBTipsRobo {
                         break;
                     }
                 }
-                
-                if (!pulosSetado) {
-                    // Se não encontrar 80, selecionar primeira opção disponível
-                    if (opcoes.length > 0) {
-                        await opcoes[0].click();
-                        this.addLog('WARN', 'Opção 80 não encontrada, usando primeira opção disponível');
-                    } else {
-                        this.addLog('WARN', 'Nenhuma opção disponível para Máximo Pulos');
-                    }
-                }
-            } else {
-                this.addLog('WARN', 'Campo Máximo Pulos não encontrado via ng-select');
-                
-                // Tentar via XPath ou outro seletor
-                const pulosInput = await this.page.$('input[placeholder*="Pulos"], input[name*="pulos"]');
-                if (pulosInput) {
-                    await pulosInput.focus();
-                    await this.page.keyboard.down('Control');
-                    await this.page.keyboard.press('A');
-                    await this.page.keyboard.up('Control');
-                    await this.page.keyboard.type('80');
-                    this.addLog('SUCCESS', 'Máximo Pulos preenchido: 80');
-                } else {
-                    this.addLog('WARN', 'Campo Máximo Pulos não encontrado');
+                if (!pulosSetado && opcoes.length > 0) {
+                    await opcoes[0].click();
+                    this.addLog('WARN', 'Opção 80 não encontrada, usando primeira opção');
                 }
             }
             
-            // =========================================
+            // ═══════════════════════════════════════════════════════════
             // PASSO 4: Clicar em Buscar
-            // =========================================
+            // ═══════════════════════════════════════════════════════════
             this.addLog('INFO', 'Procurando botão Buscar no modal...');
-            const buscarModalSelector = '#myModal-buscador > div > div > div > div > div > div > div > div.col-md-12.pt-3 > button';
-            const buscarModalBtn = await this.page.$(buscarModalSelector);
+            const buscarModalBtn = await this.page.$('#myModal-buscador > div > div > div > div > div > div > div > div.col-md-12.pt-3 > button');
             
             if (buscarModalBtn) {
                 const btnText = await buscarModalBtn.evaluate(el => el.innerText.trim());
@@ -320,307 +280,262 @@ class BBTipsRobo {
                 await buscarModalBtn.click();
                 this.addLog('INFO', 'Clicou em Buscar, aguardando resultados...');
                 await this.sleep(5000);
-                await this.takeScreenshot('03_resultados_busca');
             } else {
-                // Tentar XPath alternativo
-                const buscarXpathAlternativo = "//button[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'buscar')]";
-                const buscarBtnAlt = await this.page.$x(buscarXpathAlternativo);
+                const buscarBtnAlt = await this.page.$x("//button[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'buscar')]");
                 if (buscarBtnAlt.length > 0) {
                     await buscarBtnAlt[0].click();
-                    this.addLog('SUCCESS', 'Clicou em Buscar (via XPath alternativo)');
+                    this.addLog('SUCCESS', 'Clicou em Buscar (via XPath)');
                     await this.sleep(5000);
-                    await this.takeScreenshot('03_resultados_busca_alt');
                 } else {
                     this.addLog('ERROR', 'Botão Buscar não encontrado!');
                     return { sucesso: false, erro: 'Botão Buscar não encontrado' };
                 }
             }
             
-            // =========================================
-            // PASSO 5: Clicar na primeira linha do 5º grid para usar padrão
-            // =========================================
-            this.addLog('INFO', 'Procurando resultados da busca...');
+            // ═══════════════════════════════════════════════════════════
+            // PASSO 5: Processar as 5 DIVs de ligas
+            // ═══════════════════════════════════════════════════════════
+            this.addLog('INFO', '══════════════════════════════════════════════════════════');
+            this.addLog('INFO', 'PROCESSANDO AS 5 LIGAS (COPA, EURO, SUPER, PREMIER, TODOS)');
+            this.addLog('INFO', '══════════════════════════════════════════════════════════');
             
-            // Aguardar carregamento da tabela
-            await this.sleep(2000);
+            // XPath base para as 5 divs de ligas
+            const xpathLigasContainer = '/html/body/app-root/div/app-robos-novo/app-buscador-padroes/div/div/div/div[2]';
+            const ligas = ['COPA', 'EURO', 'SUPER', 'PREMIER', 'TODOS'];
             
-            // Usar selector específico para a 5ª tabela do modal
-            const selectorQuintaTabela = '#myModal-buscador > div > div > div:nth-child(4) > div:nth-child(5) > div > table';
-            const quintaTabela = await this.page.$(selectorQuintaTabela);
-            
-            let linhaSelecionada = false;
-            
-            if (quintaTabela) {
-                this.addLog('SUCCESS', 'Quinta tabela encontrada');
+            // ═══════════════════════════════════════════════════════════
+            // PASSO 6: Processar cada liga (div)
+            // ═══════════════════════════════════════════════════════════
+            for (let i = 0; i < ligas.length; i++) {
+                const nomeLiga = ligas[i];
+                this.addLog('INFO', '');
+                this.addLog('INFO', `══════════════════════════════════════════════════════════`);
+                this.addLog('INFO', `PROCESSANDO: LIGA ${nomeLiga} (div ${i + 1})`);
+                this.addLog('INFO', `══════════════════════════════════════════════════════════`);
                 
-                // Tentar clicar na primeira linha da tabela
-                const primeiraLinha = await quintaTabela.$('tbody tr:nth-child(1)');
-                
-                if (primeiraLinha) {
-                    this.addLog('INFO', 'Clicando na primeira linha da quinta tabela...');
-                    await primeiraLinha.click();
-                    await this.sleep(1000);
+                try {
+                    // ═══════════════════════════════════════════════════════
+                    // 6.1: XPath para a div da liga (todas as divs dentro do container)
+                    // ═══════════════════════════════════════════════════════
+                    const divLigaXPath = `${xpathLigasContainer}/div[${i + 1}]`;
+                    const divLigaElements = await this.page.$x(divLigaXPath);
                     
-                    // Verificar se apareceu dialog para confirmar
-                    this.page.on('dialog', async dialog => {
-                        this.addLog('INFO', `Dialog detectado: "${dialog.message()}"`);
-                        await dialog.accept();
-                    });
-                    
-                    await this.takeScreenshot('04_linha_selecionada');
-                    linhaSelecionada = true;
-                } else {
-                    this.addLog('WARN', 'Primeira linha não encontrada na quinta tabela');
-                }
-            } else {
-                this.addLog('WARN', 'Quinta tabela não encontrada com selector específico');
-                
-                // Fallback: tentar qualquer tabela
-                this.addLog('INFO', 'Tentando fallback com qualquer tabela...');
-                const linhas = await this.page.$('table tbody tr');
-                
-                if (linhas.length > 0) {
-                    this.addLog('SUCCESS', `Encontradas ${linhas.length} linhas em tabelas`);
-                    await linhas[0].click();
-                    await this.sleep(1000);
-                    await this.takeScreenshot('04_linha_fallback');
-                    linhaSelecionada = true;
-                }
-            }
-            
-            if (!linhaSelecionada) {
-                this.addLog('WARN', 'Não foi possível selecionar nenhuma linha');
-            }
-            
-            // =========================================
-            // PASSO 6: Clicar no botão Sim do dialog (SweetAlert2)
-            // =========================================
-            this.addLog('INFO', 'Procurando dialog SweetAlert2...');
-            await this.sleep(1500);
-            
-            // Tentar localizar o modal SweetAlert2
-            let simButton = null;
-            
-            // Método 1: Procurar pelo selector do SweetAlert2
-            const modal = await this.page.$('.swal2-modal');
-            if (modal) {
-                this.addLog('SUCCESS', 'Modal SweetAlert2 encontrado');
-                simButton = await modal.$('.swal2-confirm');
-                if (simButton) {
-                    const btnText = await simButton.evaluate(el => el.innerText.trim());
-                    this.addLog('SUCCESS', `Botão encontrado: "${btnText}"`);
-                }
-            }
-            
-            // Método 2: Procurar por selector alternativo
-            if (!simButton) {
-                simButton = await this.page.$('.sweet-alert .confirm');
-            }
-            
-            // Método 3: XPath para botão Sim
-            if (!simButton) {
-                const simXpathAlternatives = [
-                    "//button[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'sim')]",
-                    "//button[@class='swal2-confirm swal2-styled']",
-                    "//button[contains(@class, 'confirm')]"
-                ];
-                for (const xpath of simXpathAlternatives) {
-                    simButton = await this.page.$x(xpath);
-                    if (simButton && simButton.length > 0) {
-                        simButton = simButton[0];
-                        const btnText = await simButton.evaluate(el => el.innerText.trim());
-                        this.addLog('SUCCESS', `Botão encontrado via XPath: "${btnText}"`);
-                        break;
+                    if (divLigaElements.length === 0) {
+                        this.addLog('WARN', `Div da Liga ${nomeLiga} não encontrada!`);
+                        continue;
                     }
+                    
+                    // ═══════════════════════════════════════════════════════
+                    // 6.2: Clicar na primeira linha (tr) dentro da div da liga
+                    // ═══════════════════════════════════════════════════════
+                    const linhaLigaXPath = `${divLigaXPath}//table/tbody/tr[1]`;
+                    this.addLog('INFO', `XPath da linha: ${linhaLigaXPath}`);
+                    
+                    const linha = await this.page.$x(linhaLigaXPath);
+                    
+                    if (linha.length > 0) {
+                        this.addLog('INFO', `Clicando na primeira linha da Liga ${nomeLiga}...`);
+                        await linha[0].click();
+                        await this.sleep(1500);
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.3: Clicar no botão Sim do dialog
+                        // ═══════════════════════════════════════════════════════
+                        this.addLog('INFO', 'Procurando dialog de confirmação...');
+                        await this.sleep(1500);
+                        
+                        const modal = await this.page.$('.swal2-modal');
+                        if (modal) {
+                            const simButton = await modal.$('.swal2-confirm');
+                            if (simButton) {
+                                await simButton.click();
+                                this.addLog('SUCCESS', 'Clicou em Sim');
+                                await this.sleep(1500);
+                            }
+                        }
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.4: Clicar no elemento div[2]
+                        // ═══════════════════════════════════════════════════════
+                        const div2Xpath = "/html/body/app-root/div/app-robos-novo/div/div/div[5]/div[1]/div[1]/div[3]/div[2]";
+                        const div2Elements = await this.page.$x(div2Xpath);
+                        
+                        if (div2Elements.length > 0) {
+                            await div2Elements[0].click();
+                            this.addLog('SUCCESS', 'Clicou no elemento div[2]');
+                            await this.sleep(1000);
+                        }
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.5: Clicar no span "VER MAIS"
+                        // ═══════════════════════════════════════════════════════
+                        const spanXpath = "/html/body/app-root/div/app-robos-novo/div/div/div[5]/div[1]/div[1]/div[3]/div[3]/div[2]/div[2]/div[2]/span";
+                        const spanElements = await this.page.$x(spanXpath);
+                        
+                        if (spanElements.length > 0) {
+                            await spanElements[0].click();
+                            this.addLog('SUCCESS', 'Clicou no span VER MAIS');
+                            await this.sleep(1000);
+                        }
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.6: Extrair título da liga
+                        // ═══════════════════════════════════════════════════════
+                        this.addLog('INFO', 'Procurando título da liga...');
+                        let tituloLiga = `LIGA - ${nomeLiga}`;
+                        
+                        // Buscar título da liga - tentando múltiplos seletores
+                        const titulosLiga = await this.page.$x('//*[contains(@class, "text-light") and contains(@class, "container-padroes")]');
+                        
+                        if (titulosLiga.length > 0) {
+                            const ultimoTitulo = await titulosLiga[titulosLiga.length - 1].evaluate(el => el.innerText.trim());
+                            // Usar o título extraído se for válido (não vazio e não é o fallback)
+                            if (ultimoTitulo && ultimoTitulo.length > 0) {
+                                tituloLiga = ultimoTitulo;
+                                this.addLog('SUCCESS', `Título extraído da página: "${tituloLiga}"`);
+                            } else {
+                                this.addLog('WARN', `Título extraído vazio, usando fallback: "LIGA - ${nomeLiga}"`);
+                            }
+                        } else {
+                            this.addLog('WARN', `Elemento de título não encontrado, usando fallback: "LIGA - ${nomeLiga}"`);
+                        }
+                        this.addLog('INFO', `Título final da liga: "${tituloLiga}"`);
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.7: Extrair dados dos cards
+                        // ═══════════════════════════════════════════════════════
+                        this.addLog('INFO', `══════════════════════════════════════════════════════════`);
+                        this.addLog('INFO', `EXTRAINDO CARDS DA LIGA ${nomeLiga}`);                        
+                        this.addLog('INFO', `══════════════════════════════════════════════════════════`);
+                        
+                        const dadosCardsLiga = await this.extrairDadosCards(nomeLiga);
+                        
+                        if (dadosCardsLiga && dadosCardsLiga.length > 0) {
+                            todosOsCards.push(...dadosCardsLiga);
+                            this.addLog('SUCCESS', `Liga ${nomeLiga}: ${dadosCardsLiga.length} cards extraídos`);
+                        } else {
+                            this.addLog('WARN', `Liga ${nomeLiga}: Nenhum card encontrado`);
+                        }
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.8: Salvar cards no banco
+                        // ═══════════════════════════════════════════════════════
+                        if (dadosCardsLiga && dadosCardsLiga.length > 0) {
+                            this.addLog('INFO', `Salvando ${dadosCardsLiga.length} cards no banco...`);
+                            const insertResult = await this.salvarCardsNoBanco(dadosCardsLiga);
+                            
+                            if (insertResult && insertResult.success) {
+                                this.addLog('SUCCESS', `✓ ${insertResult.saved || dadosCardsLiga.length} cards salvos!`);
+                            } else {
+                                this.addLog('ERROR', `Erro ao salvar cards: ${insertResult ? insertResult.error : 'Resposta inválida'}`);
+                            }
+                        }
+                        
+                        totalTabelasProcessadas++;
+                        
+                        // ═══════════════════════════════════════════════════════
+                        // 6.9: Voltar para página inicial para próxima liga
+                        // ═══════════════════════════════════════════════════════
+                        if (i < ligas.length - 1) {
+                            this.addLog('INFO', `Voltando para página inicial para próxima liga...`);
+                            await this.page.goto(botsUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+                            await this.sleep(3000);
+                            
+                            // ═══════════════════════════════════════════════════════
+                            // 6.10: Reabrir modal do buscador
+                            // ═══════════════════════════════════════════════════════
+                            const buscarBtn = await this.page.$(buscarPadroesSelector);
+                            if (buscarBtn) {
+                                await buscarBtn.click();
+                                this.addLog('SUCCESS', 'Modal do buscador reaberto');
+                                await this.sleep(2000);
+                            }
+                            
+                            // ═══════════════════════════════════════════════════════
+                            // 6.11: Clicar em Buscar novamente
+                            // ═══════════════════════════════════════════════════════
+                            const buscarModalBtn = await this.page.$('#myModal-buscador > div > div > div > div > div > div > div > div.col-md-12.pt-3 > button');
+                            if (buscarModalBtn) {
+                                await buscarModalBtn.click();
+                                this.addLog('SUCCESS', 'Clicou em Buscar');
+                                await this.sleep(5000);
+                            }
+                        }
+                        
+                    } else {
+                        this.addLog('WARN', `Liga ${nomeLiga}: Nenhuma linha encontrada`);
+                    }
+                    
+                } catch (error) {
+                    this.addLog('ERROR', `Erro ao processar Liga ${nomeLiga}: ${error.message}`);
+                    this.addLog('ERROR', `Stack: ${error.stack}`);
                 }
             }
             
-            // Método 4: Selector original do usuário (fallback)
-            if (!simButton) {
-                simButton = await this.page.$('/html/body/div[2]/div/div[6]/button[1]');
-            }
+            // ═══════════════════════════════════════════════════════════
+            // RESUMO FINAL
+            // ═══════════════════════════════════════════════════════════
+            this.addLog('INFO', '');
+            this.addLog('INFO', '══════════════════════════════════════════════════════════');
+            this.addLog('INFO', 'RESUMO FINAL');
+            this.addLog('INFO', '══════════════════════════════════════════════════════════');
+            this.addLog('INFO', `Total de ligas processadas: ${totalTabelasProcessadas}`);
+            this.addLog('INFO', `Total de cards extraídos: ${todosOsCards.length}`);
+            this.addLog('INFO', '══════════════════════════════════════════════════════════');
             
-            if (simButton) {
-                const btnText = await simButton.evaluate(el => el.innerText.trim());
-                this.addLog('SUCCESS', `Clicando em "${btnText}"`);
-                await simButton.click();
-                this.addLog('INFO', 'Clicou no botão Sim');
-                await this.sleep(1500);
-                await this.takeScreenshot('05_dialog_sim');
-            } else {
-                this.addLog('WARN', 'Botão Sim não encontrado, tentando fechar dialog...');
-                // Tentar fechar com ESC ou clicar fora
-                await this.page.keyboard.press('Escape');
-                await this.sleep(1000);
-            }
-            
-            // =========================================
-            // PASSO 7: Clicar no elemento div[2]
-            // =========================================
-            this.addLog('INFO', 'Procurando elemento para clicar...');
-            await this.sleep(1000);
-            
-            const div2Xpath = "/html/body/app-root/div/app-robos-novo/div/div/div[5]/div[1]/div[1]/div[3]/div[2]";
-            const div2Elements = await this.page.$x(div2Xpath);
-            
-            if (div2Elements.length > 0) {
-                this.addLog('SUCCESS', 'Elemento encontrado');
-                await div2Elements[0].click();
-                this.addLog('INFO', 'Clicou no elemento div[2]');
-                await this.sleep(1000);
-                await this.takeScreenshot('06_div2_clicado');
-            } else {
-                this.addLog('WARN', 'Elemento div[2] não encontrado');
-            }
-            
-            // =========================================
-            // PASSO 8: Clicar no span final
-            // =========================================
-            this.addLog('INFO', 'Procurando span para clicar...');
-            await this.sleep(1000);
-            
-            const spanXpath = "/html/body/app-root/div/app-robos-novo/div/div/div[5]/div[1]/div[1]/div[3]/div[3]/div[2]/div[2]/div[2]/span";
-            const spanElements = await this.page.$x(spanXpath);
-            
-            if (spanElements.length > 0) {
-                const spanText = await spanElements[0].evaluate(el => el.innerText.trim());
-                this.addLog('SUCCESS', `Span encontrado: "${spanText}"`);
-                await spanElements[0].click();
-                this.addLog('INFO', 'Clicou no span');
-                await this.sleep(1000);
-                await this.takeScreenshot('07_span_clicado');
-            } else {
-                this.addLog('WARN', 'Span não encontrado');
-            }
-            
-            // =========================================
-            // EXTRAÇÃO DE DADOS DOS CARDS
-            // =========================================
-            this.addLog('INFO', '========================================');
-            this.addLog('INFO', 'EXTRAINDO DADOS DOS CARDS');
-            this.addLog('INFO', '========================================');
-            
-            const dadosCards = await this.extrairDadosCards();
-            
-            if (dadosCards && dadosCards.length > 0) {
-                this.addLog('SUCCESS', `Extraídos ${dadosCards.length} cards com sucesso`);
-                this.dadosCards = dadosCards; // Salvar para uso externo
-                dadosCards.forEach((card, index) => {
-                    this.addLog('INFO', `Card ${index + 1}: ${card.titulo} | Percentual: ${card.percentual} | SG: ${card.sg} | G1: ${card.g1} | G2: ${card.g2}`);
-                });
-            } else {
-                this.addLog('WARN', 'Nenhum card encontrado');
-                this.dadosCards = [];
-            }
-            
-            this.addLog('SUCCESS', '========================================');
+            this.addLog('SUCCESS', '══════════════════════════════════════════════════════════');
             this.addLog('SUCCESS', 'BUSCADOR DE PADRÕES CONCLUÍDO COM SUCESSO!');
-            this.addLog('SUCCESS', '========================================');
-            return { 
-                sucesso: true, 
-                message: 'Fluxo concluído', 
+            this.addLog('SUCCESS', `Ligas processadas: COPA, EURO, SUPER, PREMIER, TODOS`);
+            this.addLog('SUCCESS', '══════════════════════════════════════════════════════════');
+            
+            return {
+                sucesso: true,
+                message: 'Todas as tabelas processadas',
                 steps: this.stepCount,
-                dadosCards: dadosCards
+                totalTabelas: totalTabelasProcessadas,
+                totalCards: todosOsCards.length,
+                dadosCards: todosOsCards
             };
             
         } catch (error) {
-            this.addLog('ERROR', '========================================');
+            this.addLog('ERROR', '══════════════════════════════════════════════════════════');
             this.addLog('ERROR', `ERRO NO BUSCADOR: ${error.message}`);
-            this.addLog('ERROR', '========================================');
+            this.addLog('ERROR', '══════════════════════════════════════════════════════════');
             await this.takeScreenshot('erro_buscador');
-            
-            // Log do stack trace
             this.addLog('ERROR-STACK', error.stack);
             
             return { sucesso: false, erro: error.message, step: this.stepCount };
         }
     }
     
-    async preencherParametros(params) {
-        this.addLog('INFO', '---------------------------------------');
-        this.addLog('INFO', 'PREECHENDO PARÂMETROS');
-        this.addLog('INFO', '---------------------------------------');
-        
-        try {
-            // Máximo Pulos = 80
-            this.addLog('INFO', 'Configurando Máximo Pulos...');
-            const pulosNgSelect = await this.page.$('ng-select[placeholder*="Pulos"]');
-            if (pulosNgSelect) {
-                await pulosNgSelect.click();
-                await this.sleep(500);
-                const opcoes = await this.page.$$('ng-dropdown-panel .ng-option');
-                let pulosSetado = false;
-                for (const opcao of opcoes) {
-                    const texto = await opcao.evaluate(el => el.textContent.trim());
-                    if (texto === params.maximoPulos.toString()) {
-                        await opcao.click();
-                        this.addLog('SUCCESS', `Máximo Pulos configurado: ${texto}`);
-                        pulosSetado = true;
-                        break;
-                    }
-                }
-                if (!pulosSetado) {
-                    this.addLog('WARN', `Opção ${params.maximoPulos} não encontrada, usando primeira opção`);
-                }
-            } else {
-                this.addLog('WARN', 'Campo Máximo Pulos não encontrado');
-            }
-            
-            // % Inicial
-            this.addLog('INFO', 'Configurando Percentual Inicial...');
-            const percentInput = await this.page.$('input[placeholder*="%"]');
-            if (percentInput) {
-                await percentInput.focus();
-                await this.page.keyboard.down('Control');
-                await this.page.keyboard.press('A');
-                await this.page.keyboard.up('Control');
-                await this.page.keyboard.type(params.percentualInicial.toString());
-                this.addLog('SUCCESS', `Percentual Inicial: ${params.percentualInicial}`);
-            } else {
-                this.addLog('WARN', 'Campo Percentual não encontrado');
-            }
-            
-            // Total Registros
-            this.addLog('INFO', 'Configurando Total Registros...');
-            const registrosNgSelect = await this.page.$('ng-select[placeholder*="Registros"]');
-            if (registrosNgSelect) {
-                await registrosNgSelect.click();
-                await this.sleep(500);
-                const opcoes = await this.page.$$('ng-dropdown-panel .ng-option');
-                let registrosSetado = false;
-                for (const opcao of opcoes) {
-                    const texto = await opcao.evaluate(el => el.textContent.trim());
-                    if (texto === params.totalRegistros.toString()) {
-                        await opcao.click();
-                        this.addLog('SUCCESS', `Total Registros: ${texto}`);
-                        registrosSetado = true;
-                        break;
-                    }
-                }
-                if (!registrosSetado) {
-                    this.addLog('WARN', `Opção ${params.totalRegistros} não encontrada`);
-                }
-            } else {
-                this.addLog('WARN', 'Campo Registros não encontrado');
-            }
-            
-            await this.takeScreenshot('parametros_preenchidos');
-            this.addLog('INFO', 'Parâmetros preenchidos com sucesso');
-            
-        } catch (error) {
-            this.addLog('ERROR', `Erro ao preencher parâmetros: ${error.message}`);
-            throw error;
-        }
+    async sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
     
-    async extrairDadosCards() {
+    async extrairDadosCards(tituloLiga = '') {
         this.addLog('INFO', '╔══════════════════════════════════════════════════════════╗');
         this.addLog('INFO', '║          EXTRAÇÃO DE DADOS DOS CARDS (XPath)         ║');
         this.addLog('INFO', '╚══════════════════════════════════════════════════════════╝');
+        
+        if (tituloLiga) {
+            this.addLog('INFO', `Liga: ${tituloLiga}`);
+        }
+        
         this.addLog('INFO', `Timestamp: ${new Date().toISOString()}`);
         
         try {
-            // Esperar pelos cards carregarem
+            // ═══════════════════════════════════════════════════════════
+            // SCROLL ATÉ O FIM DA PÁGINA PARA CARREGAR TODOS OS CARDS
+            // ═══════════════════════════════════════════════════════════
+            this.addLog('INFO', '═══════════════════════════════════════════════════════════');
+            this.addLog('INFO', 'ROLANDO ATÉ O FIM DA PÁGINA...');
+            this.addLog('INFO', '═══════════════════════════════════════════════════════════');
+            
+            await this.page.evaluate(() => {
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+            
+            // Aguardar carregamento
             await this.sleep(2000);
             
             // ═══════════════════════════════════════════════════════════
@@ -628,7 +543,7 @@ class BBTipsRobo {
             // ═══════════════════════════════════════════════════════════
             const xpathContainer = `/html/body/app-root/div/app-robos-novo/div/div/div[5]/div[1]/div[1]/div[3]/div[3]/div[2]/div[2]/div[1]`;
             
-            this.addLog('INFO', `══════════════════════════════════════════════════════════`);
+            this.addLog('INFO', `═══════════════════════════════════════════════════════════`);
             this.addLog('INFO', `BUSCA POR CONTAINER DE CARDS:`);
             this.addLog('INFO', `  XPath Container: ${xpathContainer}`);
             
@@ -645,33 +560,15 @@ class BBTipsRobo {
             
             // ═══════════════════════════════════════════════════════════
             // Listar TODOS os cards dentro do container
-            // Cada card é um div direto dentro do container
             // ═══════════════════════════════════════════════════════════
             const xpathCards = `./div[not(contains(@class, 'row'))]`;
             
-            this.addLog('INFO', `══════════════════════════════════════════════════════════`);
+            this.addLog('INFO', `═══════════════════════════════════════════════════════════`);
             this.addLog('INFO', `BUSCA POR CARDS DENTRO DO CONTAINER:`);
             this.addLog('INFO', `  XPath Cards: ${xpathCards}`);
             
             const cardsXPath = await container.$x(xpathCards);
             this.addLog('INFO', `  Cards encontrados via XPath: ${cardsXPath.length}`);
-            
-            // Se não encontrou com XPath relativo, tentar divs diretos
-            if (cardsXPath.length === 0) {
-                const allDivs = await container.$$('div');
-                this.addLog('INFO', `  Total de divs no container: ${allDivs.length}`);
-                
-                // Filtrar apenas divs que parecem ser cards (têm conteúdo relevante)
-                const potentialCards = [];
-                for (const div of allDivs) {
-                    const text = await div.evaluate(el => el.innerText.trim());
-                    if (text.length > 10 && (text.includes('%') || text.includes('SG') || text.includes('G1') || text.includes('G2'))) {
-                        potentialCards.push(div);
-                    }
-                }
-                this.addLog('INFO', `  Cards potenciais filtrados: ${potentialCards.length}`);
-                cardsXPath.push(...potentialCards);
-            }
             
             if (cardsXPath.length === 0) {
                 this.addLog('WARN', `Nenhum card encontrado!`);
@@ -693,7 +590,7 @@ class BBTipsRobo {
                 try {
                     const cardData = await this.extrairDadosCardUnico(cardsXPath[i], i + 1);
                     
-                    // Formatar para INSERT na tabela resultados_cards
+                    // Formatar para INSERT na tabela ResultadosCards
                     const cardParaInsert = {
                         titulo: cardData.titulo || `Card ${i + 1}`,
                         padroes: cardData.descricao || '',
@@ -701,7 +598,8 @@ class BBTipsRobo {
                         sg: cardData.sg || 0,
                         g1: cardData.g1 || 0,
                         g2: cardData.g2 || 0,
-                        data_hora_busca: dataHoraBusca
+                        data_hora_busca: dataHoraBusca,
+                        liga: tituloLiga // Adicionar título da liga na coluna Liga
                     };
                     
                     dadosCards.push(cardParaInsert);
@@ -718,31 +616,8 @@ class BBTipsRobo {
             this.addLog('INFO', `  RESUMO DA EXTRAÇÃO:`);
             this.addLog('INFO', `  Total de cards extraídos: ${dadosCards.length}`);
             this.addLog('INFO', `  Timestamp: ${dataHoraBusca}`);
+            this.addLog('INFO', `  Liga: ${tituloLiga || 'Não informada'}`);
             this.addLog('INFO', `═══════════════════════════════════════════════════════════`);
-            
-            // ═══════════════════════════════════════════════════════════
-            // Salvar cards no banco de dados via API
-            // ═══════════════════════════════════════════════════════════
-            this.addLog('INFO', `═══════════════════════════════════════════════════════════`);
-            this.addLog('INFO', `SALVANDO CARDS NO BANCO DE DADOS...`);
-            this.addLog('INFO', `  Total de cards para inserir: ${dadosCards.length}`);
-            
-            const insertResult = await this.salvarCardsNoBanco(dadosCards);
-            
-            if (insertResult && insertResult.success) {
-                this.addLog('SUCCESS', `✓ ${insertResult.registros_inseridos} cards inseridos com sucesso!`);
-            } else {
-                this.addLog('ERROR', `Erro ao salvar cards: ${insertResult ? insertResult.error : 'Resposta inválida'}`);
-            }
-            
-            // ═══════════════════════════════════════════════════════════
-            // Resumo da extração
-            // ═══════════════════════════════════════════════════════════
-            this.addLog('INFO', `═══════════════════════════════════════════════════════════`);
-            this.addLog('INFO', `RESUMO DA EXTRAÇÃO:`);
-            this.addLog('INFO', `  Total de cards processados: ${dadosCards.length}`);
-            this.addLog('INFO', `  Cards inseridos no banco: ${insertResult && insertResult.registros_inseridos ? insertResult.registros_inseridos : 0}`);
-            this.addLog('INFO', `  Timestamp: ${dataHoraBusca}`);
             
             return dadosCards;
             
@@ -760,7 +635,7 @@ class BBTipsRobo {
      */
     async salvarCardsNoBanco(cards) {
         try {
-            const apiUrl = `${this.apiUrl}/api/inserir-cards`;
+            const apiUrl = `${this.apiUrl}/api/ResultadosCards/inserir-lote`;
             
             this.addLog('INFO', `  ═══════════════════════════════════════════════════════════════════`);
             this.addLog('INFO', `  SALVANDO CARDS - NETWORK DO BROWSER`);
@@ -789,7 +664,7 @@ class BBTipsRobo {
                         type: 'response',
                         url: url,
                         status: status,
-                        statusLine: response.statusLine, // corrigido: é propriedade, não método
+                        statusLine: response.statusLine,
                         headers: response.headers()
                     });
                     this.addLog('DEBUG', `  [NETWORK] Response: ${url} -> ${status}`);
@@ -922,28 +797,22 @@ class BBTipsRobo {
             }
             
             if (response.success) {
-                this.addLog('SUCCESS', `  ✓ Sucesso! Registros: ${parsedResult?.registros_inseridos || 'N/A'}`);
+                this.addLog('SUCCESS', `  ✓ Sucesso! Registros: ${parsedResult?.saved || 'N/A'}`);
                 return { success: true, ...parsedResult, networkLogs };
             } else {
                 this.addLog('ERROR', `  ✗ Falha: ${response.status} - ${response.statusText}`);
                 return {
                     success: false,
-                    error: response.error || `HTTP ${response.status}`,
+                    error: response.body || response.error || 'Erro desconhecido',
                     status: response.status,
-                    statusText: response.statusText,
-                    body: response.body,
-                    parsed: parsedResult,
                     networkLogs
                 };
             }
             
         } catch (error) {
-            this.addLog('ERROR', `  ═══════════════════════════════════════════════════════════════════`);
-            this.addLog('ERROR', `  ERRO GERAL!`);
-            this.addLog('ERROR', `  Message: ${error.message}`);
+            this.addLog('ERROR', `  ✗ Exceção ao salvar cards: ${error.message}`);
             this.addLog('ERROR', `  Stack: ${error.stack}`);
-            this.addLog('ERROR', `  ═══════════════════════════════════════════════════════════════════`);
-            return { success: false, error: error.message, stack: error.stack };
+            return { success: false, error: error.message };
         }
     }
     
@@ -951,7 +820,7 @@ class BBTipsRobo {
      * Extrair dados de um único card
      * @param {Element} cardElement - Elemento do card
      * @param {number} indice - Índice do card
-     * @returns {Object} Dados do card
+     * @returns {Object} Dados extraídos do card
      */
     async extrairDadosCardUnico(cardElement, indice) {
         const dadosCard = {
@@ -1008,73 +877,126 @@ class BBTipsRobo {
             }
             
             // ═══════════════════════════════════════════════════════════
-            // 5. Extrair estatísticas SG, G1, G2 de spans
+            // 5. Extrair estatísticas SG, G1, G2 - ABORDAGEM MELHORADA
             // ═══════════════════════════════════════════════════════════
-            const spans = await cardElement.$$('span');
+            // Primeiro, obter o texto completo do card para análise
+            const textoCompletoCard = await cardElement.evaluate(el => el.innerText);
             
-            for (const span of spans) {
-                const textoSpan = await span.evaluate(el => el.innerText.trim());
+            // Regex para encontrar padrões como "SG: 10", "G1: 5", "G2: 3" ou "SG 10", "G1 5", "G2 3"
+            const regexSG = /SG[:\s]+(\d+)/i;
+            const regexG1 = /G1[:\s]+(\d+)/i;
+            const regexG2 = /G2[:\s]+(\d+)/i;
+            
+            const matchSG = textoCompletoCard.match(regexSG);
+            const matchG1 = textoCompletoCard.match(regexG1);
+            const matchG2 = textoCompletoCard.match(regexG2);
+            
+            if (matchSG) {
+                dadosCard.sg = parseInt(matchSG[1], 10);
+                this.addLog('DEBUG', `  Card ${indice}: SG encontrado via regex: ${dadosCard.sg}`);
+            }
+            
+            if (matchG1) {
+                dadosCard.g1 = parseInt(matchG1[1], 10);
+                this.addLog('DEBUG', `  Card ${indice}: G1 encontrado via regex: ${dadosCard.g1}`);
+            }
+            
+            if (matchG2) {
+                dadosCard.g2 = parseInt(matchG2[1], 10);
+                this.addLog('DEBUG', `  Card ${indice}: G2 encontrado via regex: ${dadosCard.g2}`);
+            }
+            
+            // Se ainda não encontrou, tentar extrair de spans
+            if (dadosCard.sg === 0 || dadosCard.g1 === 0 || dadosCard.g2 === 0) {
+                const spans = await cardElement.$$('span');
                 
-                // SG: Primeira estatística
-                if (textoSpan.match(/^\d+$/) && dadosCard.sg === 0) {
-                    const parentText = await span.evaluate(el => el.parentElement?.innerText || '');
-                    if (parentText.toLowerCase().includes('sg')) {
-                        dadosCard.sg = parseInt(textoSpan);
+                for (const span of spans) {
+                    const textoSpan = await span.evaluate(el => el.innerText.trim());
+                    
+                    // SG: span que contenha "SG" ou pai contenha "SG"
+                    if (dadosCard.sg === 0 && textoSpan.match(/^\d+$/)) {
+                        const parentText = await span.evaluate(el => el.parentElement?.innerText || '');
+                        const spanTextLower = textoSpan.toLowerCase();
+                        if (parentText.toLowerCase().includes('sg') || spanTextLower === 'sg') {
+                            dadosCard.sg = parseInt(textoSpan, 10);
+                            this.addLog('DEBUG', `  Card ${indice}: SG encontrado via span: ${dadosCard.sg}`);
+                        }
                     }
-                }
-                
-                // G1: Segunda estatística
-                if (textoSpan.match(/^\d+$/) && dadosCard.g1 === 0) {
-                    const parentText = await span.evaluate(el => el.parentElement?.innerText || '');
-                    if (parentText.toLowerCase().includes('g1')) {
-                        dadosCard.g1 = parseInt(textoSpan);
+                    
+                    // G1: span que contenha "G1" ou pai contenha "G1"
+                    if (dadosCard.g1 === 0 && textoSpan.match(/^\d+$/)) {
+                        const parentText = await span.evaluate(el => el.parentElement?.innerText || '');
+                        const spanTextLower = textoSpan.toLowerCase();
+                        if (parentText.toLowerCase().includes('g1') || spanTextLower === 'g1') {
+                            dadosCard.g1 = parseInt(textoSpan, 10);
+                            this.addLog('DEBUG', `  Card ${indice}: G1 encontrado via span: ${dadosCard.g1}`);
+                        }
                     }
-                }
-                
-                // G2: Terceira estatística
-                if (textoSpan.match(/^\d+$/) && dadosCard.g2 === 0) {
-                    const parentText = await span.evaluate(el => el.parentElement?.innerText || '');
-                    if (parentText.toLowerCase().includes('g2')) {
-                        dadosCard.g2 = parseInt(textoSpan);
+                    
+                    // G2: span que contenha "G2" ou pai contenha "G2"
+                    if (dadosCard.g2 === 0 && textoSpan.match(/^\d+$/)) {
+                        const parentText = await span.evaluate(el => el.parentElement?.innerText || '');
+                        const spanTextLower = textoSpan.toLowerCase();
+                        if (parentText.toLowerCase().includes('g2') || spanTextLower === 'g2') {
+                            dadosCard.g2 = parseInt(textoSpan, 10);
+                            this.addLog('DEBUG', `  Card ${indice}: G2 encontrado via span: ${dadosCard.g2}`);
+                        }
                     }
-                }
-                
-                // Fallback: se ainda não encontrou, usar a ordem dos spans
-                if (textoSpan.match(/^\d+$/) && dadosCard.sg === 0) {
-                    dadosCard.sg = parseInt(textoSpan);
-                } else if (textoSpan.match(/^\d+$/) && dadosCard.g1 === 0) {
-                    dadosCard.g1 = parseInt(textoSpan);
-                } else if (textoSpan.match(/^\d+$/) && dadosCard.g2 === 0) {
-                    dadosCard.g2 = parseInt(textoSpan);
                 }
             }
             
             // ═══════════════════════════════════════════════════════════
-            // 6. Fallback: extrair tudo via XPath
+            // 6. Fallback: extrair números do texto completo (sempre executa se SG/G1/G2 = 0)
             // ═══════════════════════════════════════════════════════════
-            if (!dadosCard.titulo || !dadosCard.percentualPadrao) {
-                const textoCompleto = await cardElement.evaluate(el => el.innerText);
-                const linhas = textoCompleto.split('\n').filter(l => l.trim().length > 0);
+            if (dadosCard.sg === 0 || dadosCard.g1 === 0 || dadosCard.g2 === 0) {
+                const numeros = textoCompletoCard.match(/\d+/g);
+                this.addLog('DEBUG', `  Card ${indice}: Números encontrados no texto: ${JSON.stringify(numeros)}`);
                 
-                // Título na primeira linha
-                if (linhas.length > 0 && !dadosCard.titulo) {
-                    dadosCard.titulo = linhas[0].trim();
-                }
+                // Tentar identificar os números corretos para SG, G1, G2
+                // Buscar no texto completo por padrões específicos
+                const todasCorrespondencias = [];
                 
-                // Percentual na segunda linha
-                if (linhas.length > 1 && !dadosCard.percentualPadrao) {
-                    const possivelPercentual = linhas[1].trim();
-                    if (possivelPercentual.includes('%')) {
-                        dadosCard.percentualPadrao = possivelPercentual;
+                // Encontrar todas as posições de "SG", "G1", "G2" no texto
+                let posicaoSG = -1, posicaoG1 = -1, posicaoG2 = -1;
+                
+                const matchSGPos = textoCompletoCard.search(/SG/i);
+                const matchG1Pos = textoCompletoCard.search(/G1/i);
+                const matchG2Pos = textoCompletoCard.search(/G2/i);
+                
+                if (matchSGPos >= 0) {
+                    // Pegar o número mais próximo após "SG"
+                    const textoAposSG = textoCompletoCard.substring(matchSGPos);
+                    const numeroAposSG = textoAposSG.match(/\d+/);
+                    if (numeroAposSG) {
+                        dadosCard.sg = parseInt(numeroAposSG[0], 10);
+                        this.addLog('DEBUG', `  Card ${indice}: SG encontrado após 'SG': ${dadosCard.sg}`);
                     }
                 }
                 
-                // Estatísticas numéricas
-                const numeros = textoCompleto.match(/\d+/g);
-                if (numeros && numeros.length >= 3) {
-                    if (dadosCard.sg === 0) dadosCard.sg = parseInt(numeros[0]);
-                    if (dadosCard.g1 === 0) dadosCard.g1 = parseInt(numeros[1]);
-                    if (dadosCard.g2 === 0) dadosCard.g2 = parseInt(numeros[2]);
+                if (matchG1Pos >= 0) {
+                    const textoAposG1 = textoCompletoCard.substring(matchG1Pos);
+                    const numeroAposG1 = textoAposG1.match(/\d+/);
+                    if (numeroAposG1) {
+                        dadosCard.g1 = parseInt(numeroAposG1[0], 10);
+                        this.addLog('DEBUG', `  Card ${indice}: G1 encontrado após 'G1': ${dadosCard.g1}`);
+                    }
+                }
+                
+                if (matchG2Pos >= 0) {
+                    const textoAposG2 = textoCompletoCard.substring(matchG2Pos);
+                    const numeroAposG2 = textoAposG2.match(/\d+/);
+                    if (numeroAposG2) {
+                        dadosCard.g2 = parseInt(numeroAposG2[0], 10);
+                        this.addLog('DEBUG', `  Card ${indice}: G2 encontrado após 'G2': ${dadosCard.g2}`);
+                    }
+                }
+                
+                // Se ainda não encontrou, usar fallback com números sequenciais
+                if (numeros && numeros.length >= 3 && (dadosCard.sg === 0 || dadosCard.g1 === 0 || dadosCard.g2 === 0)) {
+                    this.addLog('DEBUG', `  Card ${indice}: Usando fallback com números sequenciais`);
+                    if (dadosCard.sg === 0) dadosCard.sg = parseInt(numeros[0], 10);
+                    if (dadosCard.g1 === 0) dadosCard.g1 = parseInt(numeros[1], 10);
+                    if (dadosCard.g2 === 0) dadosCard.g2 = parseInt(numeros[2], 10);
                 }
             }
             
@@ -1096,9 +1018,67 @@ class BBTipsRobo {
         }
     }
     
-    async sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // /**
+    //  * Executar buscador de padrões com parâmetros
+    //  * @param {Object} params - Parâmetros do buscador
+    //  */
+    // async executarBuscadorPadroes(params = {}) {
+    //     const { parametros } = params;
+        
+    //     this.addLog('INFO', '╔══════════════════════════════════════════════════════════╗');
+    //     this.addLog('INFO', '║          BUSCADOR DE PADRÕES                        ║');
+    //     this.addLog('INFO', '╚══════════════════════════════════════════════════════════╝');
+        
+    //     const config = parametros || {
+    //         maximoPulos: 80,
+    //         percentualInicial: 50,
+    //         totalRegistros: 10,
+    //         stakeInicial: 10,
+    //         multiplicador: 2
+    //     };
+        
+    //     this.addLog('INFO', `Configuração: ${JSON.stringify(config)}`);
+        
+    //     try {
+    //         // Navegar para página de bots
+    //         const botsUrl = `${this.config.urlBase}/bots/novo`;
+    //         this.addLog('INFO', `Navegando para: ${botsUrl}`);
+    //         await this.page.goto(botsUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+    //         await this.sleep(3000);
+            
+    //         // Clicar em Buscar Padrões
+    //         const buscarPadroesSelector = 'body > app-root > div > app-robos-novo > div > div > div:nth-child(5) > div > div.col-md-6.px-3 > div.col-md-12.pt-1 > button.btn.btn-success.ms-2';
+    //         const buscarPadroesBtn = await this.page.$(buscarPadroesSelector);
+            
+    //         if (buscarPadroesBtn) {
+    //             const btnText = await buscarPadroesBtn.evaluate(el => el.innerText.trim());
+    //             this.addLog('SUCCESS', `Botão encontrado: "${btnText}"`);
+    //             await buscarPadroesBtn.click();
+    //             await this.sleep(2000);
+    //         } else {
+    //             this.addLog('ERROR', 'Botão Buscar Padrões não encontrado!');
+    //             return { sucesso: false, erro: 'Botão Buscar Padrões não encontrado' };
+    //         }
+            
+    //         // Extrair cards
+    //         const dadosCards = await this.extrairDadosCards('Busca Manual');
+            
+    //         if (dadosCards && dadosCards.length > 0) {
+    //             this.addLog('SUCCESS', `${dadosCards.length} cards extraídos`);
+    //         }
+            
+    //         return {
+    //             sucesso: true,
+    //             steps: this.stepCount,
+    //             totalCards: dadosCards.length,
+    //             dadosCards: dadosCards
+    //         };
+            
+    //     } catch (error) {
+    //         this.addLog('ERROR', `Erro no buscador: ${error.message}`);
+    //         return { sucesso: false, erro: error.message, step: this.stepCount };
+    //     }
+    // }
     
     /**
      * Método main.async para executar o robô
@@ -1131,6 +1111,11 @@ class BBTipsRobo {
             this.addLog('ERROR', `Stack: ${error.stack}`);
             return { sucesso: false, erro: error.message };
         }
+    }
+    
+    // Alias para compatibilidade - executarBuscadorPadroes chama executarBuscadorTodasTabelas
+    async executarBuscadorPadroes(params = {}) {
+        return this.executarBuscadorTodasTabelas(params);
     }
 }
 

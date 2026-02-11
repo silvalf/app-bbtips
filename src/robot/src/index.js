@@ -43,17 +43,14 @@ async function main() {
         
         console.log('✅ Login realizado!');
         
-        // Executar fluxo do Buscador
-        const resultado = await robo.executarBuscadorPadroes(config.buscadorPadroes);
+        // Executar fluxo do Buscador - TODAS AS TABELAS
+        const resultado = await robo.executarBuscadorTodasTabelas(config.buscadorPadroes);
         
         if (resultado.sucesso) {
             console.log('\n✅ SUCESSO!');
-            if (resultado.lucros) {
-                console.log('\n🏆 MELHORES LUCROS:');
-                resultado.lucros.slice(0, 5).forEach((l, i) => {
-                    console.log(`  ${i + 1}. ${l.nome}: ${l.valor}`);
-                });
-            }
+            console.log(`\n📊 RESUMO:`);
+            console.log(`   Tabelas processadas: ${resultado.totalTabelas || 0}`);
+            console.log(`   Cards extraídos: ${resultado.totalCards || 0}`);
         }
         
         await robo.close();

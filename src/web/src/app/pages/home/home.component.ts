@@ -102,9 +102,9 @@ import { RouterLink } from '@angular/router';
                 <div class="action-icon bg-green">💰</div>
                 <span>Bancas</span>
               </a>
-              <a routerLink="/padroes" class="quick-action-item">
+              <a routerLink="/Bot" class="quick-action-item">
                 <div class="action-icon bg-purple">📋</div>
-                <span>Padrões</span>
+                <span>Bots</span>
               </a>
               <a routerLink="/simulador" class="quick-action-item">
                 <div class="action-icon bg-amber">🧮</div>
